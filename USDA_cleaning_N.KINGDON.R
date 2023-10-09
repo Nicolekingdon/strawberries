@@ -108,6 +108,11 @@ a <- v_trns$new_vec
 
 v_trns$footnotes
 
+strwb_census <- strwb_census |>
+  select(1:3, 6, 16, 18, 20:27)
+
+strwb_census$Value <- as.numeric(str_replace_all(strwb_census$Value,pattern = ",", replacement = "")) 
+
 ##Strawberry Survey
 
 strwb_survey <- strawberry |> filter(Program == "SURVEY")
@@ -276,5 +281,79 @@ strwb_survey <- strwb_survey |>
     chemical %in% c("DODINE") ~ "112-65-2; 15880-99-6; 2439-10-3; 51426-08-5; 96923-04-5",
     chemical %in% c("EMAMECTIN BENZOATE") ~ "155569-91-8",
     chemical %in% c("ENDOSULFAN") ~ "	115-29-7",
+    chemical %in% c("ETHEPHON") ~ "16672-87-0",
+    chemical %in% c("ETOXAZOLE") ~ "153233-91-1",
+    chemical %in% c("FENAZAQUIN") ~ "120928-09-8",
+    chemical %in% c("FENBUTATIN-OXIDE") ~ "13356-08-6",
+    chemical %in% c("FENHEXAMID") ~ "	126833-17-8",
+    chemical %in% c("FENPROPATHRIN") ~ "39515-41-8",
+    chemical %in% c("FENPYROXIMATE") ~ "134098-61-6",
+    chemical %in% c("FERRIC SODIUM EDTA") ~ "15708-41-5",
+    chemical %in% c("FLONICAMID") ~ "158062-67-0",
+    chemical %in% c("FLUBENDIAMIDE") ~ "272451-65-7",
+    chemical %in% c("FLUDIOXONIL") ~ "131341-86-1",
+    chemical %in% c("FLUMIOXAZIN") ~ "103361-09-7",
+    chemical %in% c("FLUOPYRAM") ~ "658066-35-4",
+    chemical %in% c("FLUROXYPYR 1-MHE") ~ "69377-81-7",
+    chemical %in% c("FLUTOLANIL") ~ "66332-96-5",
+    chemical %in% c("FLUTRIAFOL") ~ "76674-21-0",
+    chemical %in% c("FLUXAPYROXAD") ~ "907204-31-3",
+    chemical %in% c("FOSETYL-AL") ~ "39148-24-8",
+    chemical %in% c("GARLIC OIL") ~ "8000-78-0",
+    chemical %in% c("GLUFOSINATE-AMMONIUM") ~ "77182-82-2",
+    chemical %in% c("GLYPHOSATE ISO. SALT") ~ "38641-94-0",
+    chemical %in% c("GLYPHOSATE POT. SALT") ~ "70901-12-1",
+    chemical %in% c("HALOSULFURON-METHYL") ~ "100784-20-1",
+    chemical %in% c("HEXYTHIAZOX") ~ "78587-05-0",
+    chemical %in% c("HYDROGEN PEROXIDE") ~ "7722-84-1",
+    chemical %in% c("IMIDACLOPRID") ~ "138261-41-3",
+    chemical %in% c("INDOLEBUTYRIC ACID") ~ "133-32-4",
+    chemical %in% c("IPRODIONE") ~ "36734-19-7",
+    chemical %in% c("IRON PHOSPHATE") ~ "10045-86-0",
+    chemical %in% c("KANTOR") ~ "145701-23-1",
+    chemical %in% c("LAMBDA-CYHALOTHRIN") ~ "91465-08-6",
+    chemical %in% c("MALATHION") ~ "121-75-5",
+    chemical %in% c("MANCOZEB") ~ "8018-01-7",
+    chemical %in% c("MEFENOXAM") ~ "70630-17-0",
+    chemical %in% c("METALDEHYDE") ~ "108-62-3",
+    chemical %in% c("METAM-POTASSIUM") ~ "137-41-7",
+    chemical %in% c("METAM-SODIUM") ~ "137-42-8",
+    chemical %in% c("METHOXYFENOZIDE") ~ "161050-58-4",
+    chemical %in% c("METHYL BROMIDE") ~ "74-83-9",
+    chemical %in% c("MINERAL OIL") ~ "8012-95-1",
+    chemical %in% c("MONO-POTASSIUM SALT") ~ "7447-40-7",
+    chemical %in% c("MUSTARD OIL") ~ "57-06-7",
+    chemical %in% c("MYCLOBUTANIL") ~ "88671-89-0",
+    chemical %in% c("NALED") ~ "300-76-5",
+    chemical %in% c("POTASSIUM SALTS") ~ "61790-44-1",
+    chemical %in% c("POTASSIUM SILICATE") ~ "1312-76-1",
+    chemical %in% c("PROPICONAZOLE") ~ "60207-90-1",
+    chemical %in% c("PYRACLOSTROBIN") ~ "175013-18-0",
+    chemical %in% c("PYRETHRINS") ~ "8003-34-7",
+    chemical %in% c("PYRIDABEN") ~ "96489-71-3",
+    chemical %in% c("PYRIMETHANIL") ~ "53112-28-0",
+    chemical %in% c("PYRIPROXYFEN") ~ "95737-68-1",
+    chemical %in% c("QUINOLINE") ~ "91-22-5",
+    chemical %in% c("SIMAZINE") ~ "122-34-9",
+    chemical %in% c("SOYBEAN OIL") ~ "8001-22-7",
+    chemical %in% c("SPINETORAM") ~ "187166-40-1",
+    chemical %in% c("SPINOSAD") ~ "283594-90-1",
+    chemical %in% c("SPIROTETRAMAT") ~ "135410-20-7",
+    chemical %in% c("SPIROMESIFEN") ~ "203313-25-1",
+    chemical %in% c("SULFENTRAZONE") ~ "122836-35-5",
+    chemical %in% c("SULFOXAFLOR") ~ "946578-00-3",
+    chemical %in% c("SULFUR") ~ "7704-34-9",
+    chemical %in% c("TERBACIL") ~ "5902-51-2",
+    chemical %in% c("TETRACONAZOLE") ~ "112281-77-3",
+    chemical %in% c("THIAMETHOXAM") ~ "153719-23-4",
+    chemical %in% c("THIOPHANATE-METHYL") ~ "23564-05-8",
+    chemical %in% c("THIRAM") ~ "137-26-8",
+    chemical %in% c("TRIFLOXYSTROBIN") ~ "141517-21-7",
+    chemical %in% c("TRIFLUMIZOLE") ~ "68694-11-1",
+    chemical %in% c("ZETA-CYPERMETHRIN") ~ "137497-61-1; 139203-31-9; 142443-95-6; 146909-55-9; 159940-28-0; 186554-45-0; 52315-07-8; 69865-47-0; 71697-59-1; 86752-99-0; 86753-92-6; 88161-75-5; 97955-44-7",
     TRUE ~ "Unknown"  
   ))
+
+strwb_survey <- strwb_survey |>
+  select(1, 4, 2, 3, 5, 6, 7, 9, 8) |>
+  rename("PC#" = "pc#")
