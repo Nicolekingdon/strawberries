@@ -351,9 +351,24 @@ strwb_survey <- strwb_survey |>
     chemical %in% c("TRIFLOXYSTROBIN") ~ "141517-21-7",
     chemical %in% c("TRIFLUMIZOLE") ~ "68694-11-1",
     chemical %in% c("ZETA-CYPERMETHRIN") ~ "137497-61-1; 139203-31-9; 142443-95-6; 146909-55-9; 159940-28-0; 186554-45-0; 52315-07-8; 69865-47-0; 71697-59-1; 86752-99-0; 86753-92-6; 88161-75-5; 97955-44-7",
+    chemical %in% c("AMMONIUM PELARGONATE") ~ "144-08-3",
+    chemical %in% c("ISOFETAMID") ~ "163520-33-0", 
+    chemical %in% c("FLUPYRADIFURONE") ~ "951659-40-8",
+    chemical %in% c("NAPROPAMIDE") ~ "15299-99-7",
+    chemical %in% c("NOVALURON") ~ "116714-46-6",
+    chemical %in% c("OXYFLUORFEN") ~ "42874-03-3", 
+    chemical %in% c("PARAQUAT") ~ "1910-42-5", 
+    chemical %in% c("PENDIMETHALIN") ~ "40487-42-1",
+    chemical %in% c("PENTHIOPYRAD") ~ "183675-82-3",
+    chemical %in% c("PEROXYACETIC ACID") ~ "79-21-0",
+    chemical %in% c("PIPERONYL BUTOXIDE") ~ "51-03-6",
+    chemical %in% c("POLYOXIN D ZINC SALT") ~ "63548-53-8",
+    chemical %in% c("POTASSIUM BICARBON.") ~ "298-14-6",
     TRUE ~ "Unknown"  
   ))
 
 strwb_survey <- strwb_survey |>
-  select(1, 4, 2, 3, 5, 6, 7, 9, 8) |>
-  rename("PC#" = "pc#")
+  select(3, 4, 6, 7, 9, 8) |>
+  arrange(State)|>
+  rename("PC#" = "pc#") |>
+  distinct(State, chemical, .keep_all = TRUE)
