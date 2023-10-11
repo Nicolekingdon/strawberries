@@ -366,7 +366,8 @@ strwb_survey <- strwb_survey |>
     chemical %in% c("POTASSIUM BICARBON.") ~ "298-14-6",
     chemical %in% c("CYANTRANILIPROLE") ~ "392850-27-3",
     chemical %in% c("PYDIFLUMETOFEN") ~ "1269816-73-9",
-    TRUE ~ "Unknown"  
+    chemical %in% c("COPPER CHLORIDE HYD.") ~ "10125-13-0",
+    TRUE ~ "Bacteria"  
   ))
 
 strwb_survey <- strwb_survey |>
