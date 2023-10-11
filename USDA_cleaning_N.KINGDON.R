@@ -364,6 +364,8 @@ strwb_survey <- strwb_survey |>
     chemical %in% c("PIPERONYL BUTOXIDE") ~ "51-03-6",
     chemical %in% c("POLYOXIN D ZINC SALT") ~ "63548-53-8",
     chemical %in% c("POTASSIUM BICARBON.") ~ "298-14-6",
+    chemical %in% c("CYANTRANILIPROLE") ~ "392850-27-3",
+    chemical %in% c("PYDIFLUMETOFEN") ~ "1269816-73-9",
     TRUE ~ "Unknown"  
   ))
 
