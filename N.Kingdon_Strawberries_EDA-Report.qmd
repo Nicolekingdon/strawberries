@@ -1,0 +1,108 @@
+---
+title: "Strawberries in the United States: Exploratory Data Analysis"
+author: "Nicole Kingdon"
+subtitle: "GRS 615: Data Science in R"
+date: 10-18-2023
+date-format: long
+format: pdf
+editor: visual
+bibliography: references.bib
+---
+
+## Introduction
+
+### Strawberries & Positive Health
+
+Strawberries are a fruit that holds several minerals, vitamins, and phytonutrients [@craig1997], which have positive implications on human health [@afrin2016]. Specifically, strawberries have been found to help reduce likelihood of cancer, diabetes, obesity, neurodegeneration, cardiovascular disease, and metabolic syndrome (see Figure 1) [@afrin2016]. Although strawberries as a healthy food is the norm, pesticides appear to be harming the beneficial factors of this fruit.
+
+[![Health benefits of strawberries (Afrin et al., 2016)](Screenshot%202023-10-15%20at%202.09.03%20PM.png){fig-align="center"}](https://pubs.acs.org/doi/full/10.1021/acs.jafc.6b00857?casa_token=Yey0lgUCklwAAAAA%3ACiBJjsv3mVDKwh4SMJ2rsVq25ATRzyFtirLg_tTg1Rx-uo901_rYS4Ict3dcdlmBDLT4EGjoHKdDta8#)
+
+### Strawberries & Pesticides
+
+Pesticides are used on fruit and vegetable crops, including strawberries, with hopes to increase the quantity [@fenik2011]. Pesticides are made of chemical compounds to reduce or completely eliminate pests from impacting crops [@afrin2016]. These chemical compounds may increase the yield of the crop, but may have a large risk on human health. Additionally, they may contaminate bodies of water and soil with the chemicals, help pests develop resistance to the chemicals, and impact helpful organisms from persisting in areas where pesticides are used. Overall, there are positive and negative impacts of using pesticides (see Figure 2), but it is important to further examine these impacts, specifically on strawberries, to understand the implications of using such.
+
+[![Positive and negative implications of pesticides on fruit and vegetable crops (Fenik et al., 2011)](Screenshot%202023-10-15%20at%201.33.38%20PM.png){fig-align="center"}](https://www.sciencedirect.com/science/article/pii/S0165993611000938?casa_token=K6MASOVxhRsAAAAA:9McnNxBwxT2h9oXJg1FPvXtoYg_M14Q91ItmrqxsiQ5wZBVpZ2oSWHHitaCOJm9A_Fig87pkZg)
+
+### Organic Strawberries
+
+Strawberries that use alternative and safer methods to production are considered organic [@verteramochiu2023]. Along with these alternative methods comes a higher cost of production and care, which increases the price to the consumer.
+
+### Analyzing Strawberry Production
+
+The literature varies on if organic or non-organic is environmentally better [@afrin2016]. This exploratory data analysis on production of strawberries, which encompasses both processed (non-organic) and fresh (organic) market data, will help us better understand production of strawberries in the United States.
+
+## Data Acquisition & Assessment
+
+### USDA-NASS Data
+
+The data was acquired from [U.S. Department of Agriculture (USDA) and the National Agricultural Statistics Service (NASS)](https://quickstats.nass.usda.gov/). The data was uploaded for data cleaning and organizing and exploratory data analysis by Professor Haviland Wright, who chose the following data: [USDA-NASS](https://quickstats.nass.usda.gov/results/45FBC825-B104-38E2-9802-839F5F3C7036).
+
+The data frame uploaded to R is titled `strawberry` (see below).
+
+```{r warning=FALSE, message=FALSE}
+#| label: read data - glimpse 
+#| echo: false
+
+library(readr)  
+library(dplyr)
+```
+
+```{r warning=FALSE, message=FALSE}
+strawberry <- read_csv("strawberry.csv", col_names = TRUE)
+```
+
+```{r}
+#| echo: false
+glimpse(strawberry)
+```
+
+### Census Data
+
+The data offers census data based on state that represents fresh market (organic) and process market (non-organic) sales.
+
+```{r warning=FALSE, message=FALSE}
+#| echo: false
+census <- strawberry |>
+  filter(Program == "CENSUS")
+
+glimpse(census)
+```
+
+### Survey Data
+
+Additionally, it holds survey information for each state, specifically indicating pesticides and bacterium used to preserve strawberry crop yield. In addition, it offers fresh and process market data.
+
+```{r warning=FALSE, message=FALSE}
+#| echo: false
+survey <- strawberry |>
+  filter(Program == "SURVEY")
+
+glimpse(survey)
+```
+
+### States
+
+There were 47 states (`r paste(strawberry|> distinct(State))`) with two states considered as "other states".
+
+### Years
+
+The data was from the years `r paste(strawberry|> distinct(Year))`.
+
+### Assumptions & Motivations
+
+#### Census Data
+
+The `census` data was a nation-wide collection of data about the fresh and process markets related to strawberries. This data has values that are indicated as `(D)`, which are data that was withheld upon request by the strawberry market in that particular state. This could leave out important information in the data.
+
+#### Survey Data
+
+The `survey` data was collected via a survey sent out to each state in the United States. There were only 11 out of 47 states who returned the survey (`r paste(survey|> distinct(State))`), which includes the "other states". The "other states" did not have any data relating to pesticides and bacterium. This is only a `r paste(round((11/47)*100))`% response rate, which is not comprehensive of all the states and the entire United States process market. The states that did return the survey will still be able to show a report of pesticide and bacterium usage on their processed strawberry crops.
+
+## Data Cleaning & Organizing
+
+```{r}
+library(knitr)  
+library(kableExtra)
+library(tidyverse)
+library(stringr)
+```
