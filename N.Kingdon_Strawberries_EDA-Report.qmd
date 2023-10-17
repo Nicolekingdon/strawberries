@@ -13,7 +13,7 @@ bibliography: references.bib
 
 ### Strawberries & Positive Health
 
-Strawberries are a fruit that holds several minerals, vitamins, and phytonutrients [@craig1997], which have positive implications on human health [@afrin2016]. Specifically, strawberries have been found to help reduce likelihood of cancer, diabetes, obesity, neurodegeneration, cardiovascular disease, and metabolic syndrome (see Figure 1) [@afrin2016]. Although strawberries as a healthy food is the norm, pesticides appear to be harming the beneficial factors of this fruit.
+Strawberries are a fruit that holds several minerals, vitamins, and nutrients [@craig1997], which have positive implications on human health [@afrin2016]. Specifically, strawberries have been found to help reduce likelihood of cancer, diabetes, obesity, neurodegeneration, cardiovascular disease, and metabolic syndrome (see Figure 1) [@afrin2016]. Although strawberries as a healthy food is the norm, pesticides appear to be harming the beneficial factors of this fruit.
 
 [![Health benefits of strawberries (Afrin et al., 2016)](Screenshot%202023-10-15%20at%202.09.03%20PM.png){fig-align="center"}](https://pubs.acs.org/doi/full/10.1021/acs.jafc.6b00857?casa_token=Yey0lgUCklwAAAAA%3ACiBJjsv3mVDKwh4SMJ2rsVq25ATRzyFtirLg_tTg1Rx-uo901_rYS4Ict3dcdlmBDLT4EGjoHKdDta8#)
 
@@ -96,7 +96,7 @@ The `census` data was a nation-wide collection of data about the fresh and proce
 
 #### Survey Data
 
-The `survey` data was collected via a survey sent out to each state in the United States. There were only 11 out of 47 states who returned the survey (`r paste(survey|> distinct(State))`), which includes the "other states". The "other states" did not have any data relating to pesticides and bacterium. This is only a `r paste(round((11/47)*100))`% response rate, which is not comprehensive of all the states and the entire United States process market. The states that did return the survey will still be able to show a report of pesticide and bacterium usage on their processed strawberry crops.
+The `survey` data was collected via a survey sent out to each state in the United States. There were only 11 out of 47 states who returned the survey (`r paste(survey|> distinct(State))`), which includes the "other states". (The "other states" did not have any data relating to pesticides and bacterium.) This is only a `r paste(round((11/47)*100))`% response rate, which is not comprehensive of all the states and the entire United States process market. The states that did return the survey will still be able to show a report of pesticide and bacterium usage on their processed strawberry crops.
 
 ## Data Cleaning & Organizing
 
@@ -126,6 +126,7 @@ Removed columns with a single value in all columns
 
 ```{r}
 #| label: drop one-item columns
+#| echo: false
 
 ## define function
 drop_one_value_col <- function(df){
@@ -160,6 +161,7 @@ Is every line associated with a state?
 
 ```{r}
 #| label: examine rows
+#| echo: false
 
 ## state_all contains the number of rows containing data 
 ## for each of the 47 strawberry-growing states.
@@ -189,6 +191,7 @@ Examine the California data
 
 ```{r}
 #| label: examine California data
+#| echo: false
 
 ## filter rows of California data from the CENSUS data
 calif_census <- strawberry |> filter((State=="CALIFORNIA") & (Program=="CENSUS"))
@@ -250,6 +253,7 @@ Separated `Data Item` into columns by ",".
 
 ```{r}
 #| label: split Data Item
+#| echo: false
 
 ## This will be done in stages --
 
@@ -401,6 +405,7 @@ strwb_census$temp3 <- str_trim(strwb_census$temp3, side = "both")
 ```{r}
 #| label: create a fresh market column
 #| eval: true
+#| echo: false
 
 ## make a copy of the temp2 column named `Fresh Market`.
 strwb_census <- strwb_census |> mutate(`Fresh Market` = temp2, .after = temp2)
@@ -430,6 +435,7 @@ Created a "Process Market" column.
 
 ```{r}
 #| label: make process market column
+#| echo: false
 
 ## Make a copy of temp2 named `Process Market`
 strwb_census <- strwb_census |> mutate(`Process Market` = temp2, .after = temp2)
@@ -453,6 +459,7 @@ Removed NA's from prop_acct, temp2, and temp3.
 
 ```{r}
 #| label: remove NAs
+#| echo: false
 
 ## substitute a space for NA in prop_acct column
 strwb_census$prop_acct[is.na(strwb_census$prop_acct)] <- "" 
@@ -470,6 +477,7 @@ Combined temp2 with temp3 to create Metric column. Removed parts of string that 
 
 ```{r}
 #| label: final cleanup
+#| echo: false
 
 strwb_census <- strwb_census |> unite(temp2, temp3, col="Metric", sep="")
 
@@ -496,6 +504,7 @@ The Value column was transformed.
 #| warning: false
 #| message: false
 #| eval: true
+#| echo: false
 
 ## remove commas from numbers
 ## fix footnotes
@@ -583,6 +592,7 @@ I finished cleaning and organizing the `strwb_census` data frame, which is detai
 First, I selected particular columns that had necessary data.
 
 ```{r}
+#| echo: false
 strwb_census <- strwb_census |>
   select(1:2, 4, 6:11, 14:15)
 ```
@@ -592,6 +602,8 @@ Next, I removed the "," from the `Value` column and transformed them into numeri
 ```{r}
 #| warning: false
 #| message: false
+#| echo: false
+
 strwb_census$Value <- as.numeric(str_replace_all(strwb_census$Value,pattern = ",", replacement = "")) 
 
 ```
@@ -601,23 +613,521 @@ After that, I cleaned up the `CV (%)` column by changing the values to numbers, 
 ```{r}
 #| warning: false
 #| message: false
+#| echo: false
 
 strwb_census$`CV (%)` <- as.numeric(strwb_census$`CV (%)`)
 ```
 
-Futhermore, I am going to omit all rows in the `Value` and `CV (%)` columns with `NA` values. These are being omitted because they hold no meaning. Only the `Value` column had to be adjusted, as the `CV (%)` column did not have any values if the `Value` column also did not.
+Furthermore, I am going to omit all rows in the `Value` and `CV (%)` columns with `NA` values. These are being omitted because they hold no meaning. Only the `Value` column had to be adjusted, as the `CV (%)` column did not have any values if the `Value` column also did not.
 
 ```{r}
+#| echo: false
 strwb_census <- na.omit(strwb_census[strwb_census$Value, ])
 ```
 
 Finally, to complete the `strwb_census` cleaning and organizing, I am going to arrange the `State` column to be in ascending order.
 
 ```{r}
+#| echo: false
 strwb_census <- strwb_census |>
   arrange(State)
 ```
 
+#### Survey
+
 Professor Wright had organized the SURVEY data frame splitting the marketing, and production data from the chemical application data. In the strawberry data frame, The `CENSUS` rows contain marketing, sales, and production data. The `SURVEY` rows contain rows which may be redundant with the CENSUS rows and chemical application rows. These rows contain fresh and process market sales data, which have been removed.
+
+Began cleaning and organizing `strwb_survey`.
+
+```{r}
+#| label: strwb_survey preliminary exploration
+#| echo: false
+#| eval: true
+
+# glimpse(strwb_survey)
+
+## find strwb_survey columns that should be split into columns
+## 
+
+# distinct(strwb_survey[,3]) |> kable()
+# c4 <- distinct(strwb_survey[,4])
+# 
+# c6 <- distinct(strwb_survey[,6])
+# c7 <- distinct(strwb_survey[,7])
+# c8 <- distinct(strwb_survey[,8])
+
+# c3 |> kable()
+# c4 |> kable()
+# 
+# c6 |> kable()
+# c7 |> kable()
+# c8 |> kable()
+
+
+```
+
+<!-- ## Column analyses -->
+
+<!-- ### Period -->
+
+```{r}
+#| label: period column 
+#| echo: false
+
+per_c <- strwb_survey |> select(Period) |> distinct()
+per_c <- unlist(per_c)
+
+
+## the Period column denotes
+## three periods for data collection
+##    marketing year
+##    year
+##    year - Aug Forecast
+##
+
+
+
+```
+
+<!-- data item -->
+
+```{r}
+#| label: data item analysis
+#| echo: false
+
+
+## columns need descriptive names
+
+strwb_survey <- strwb_survey |> 
+  separate_wider_delim(  cols = `Data Item`,
+                         delim = ",",
+                         names = c("temp1",
+                                 "temp2",
+                                 "temp3",
+                                 "temp4"),
+                         too_many = "error",
+                         too_few = "align_start"
+                       )
+
+strwb_survey <- strwb_survey |>
+  separate_wider_delim(  cols = temp1,
+                         delim = " - ",
+                         names = c("temp1a",
+                                 "temp1b"),
+                         too_many = "error",
+                         too_few = "align_start"
+                       )
+
+
+# a <- strwb_survey |> distinct(temp1a)
+## temp1a contains only 1 value -- STRAWBERRIES
+
+a <- strwb_survey |> distinct(temp1a)
+
+## It appears that strwb_survey intermingles
+## market data rows and chemical data rows, with
+## the indicators for the differet category of rows
+## being in the "Domain" column.
+## 
+
+## let's examing the domain column -- begining lby
+## separting with 
+## splitting Domain into columns
+
+
+
+
+```
+
+<!-- Domain -->
+
+```{r}
+#| label: domain
+#| echo: false
+#| eval: true
+
+
+
+strwb_survey <- strwb_survey |>
+  separate_wider_delim(  cols = Domain,
+                         delim = ",",
+                         names = c("temp22",
+                                 "temp23"),
+                         too_many = "error",
+                         too_few = "align_start"
+                       )
+
+
+t22 <- unique(strwb_survey$temp22)
+
+t23 <- unique(strwb_survey$temp23)
+
+## Now separate the first column of the Domain Category.
+## This iss allow the Chemical rows to be identified
+## easity
+
+
+
+```
+
+<!-- Domain Category -->
+
+```{r}
+#| label: Domain Category
+#| echo: false
+#| eval: true
+
+
+strwb_survey <- strwb_survey |>
+  separate_wider_delim(  cols = `Domain Category`,
+                         delim = ",",
+                         names = c("temp42",
+                                 "temp43",
+                                 "temp44",
+                                 "temp45"),
+                         too_many = "error",
+                         too_few = "align_start"
+                       )
+
+
+## temp22 or temp42 or both == CHEMICAL 
+##  else the row contains market data
+
+
+
+strwb_survey_chem <- strwb_survey |> filter((temp22 == "CHEMICAL") | (temp42 == "CHEMICAL"))
+
+strwb_survey_mkt <- strwb_survey |> filter(!((temp22 == "CHEMICAL") | (temp42 == "CHEMICAL")))
+
+
+```
+
+Drop one-value columns in `strwb_survey_chem`.
+
+```{r}
+#| label: 1-value cols
+#| echo: false
+#| eval: true
+
+chem1 <-  drop_one_value_col(strwb_survey_chem)
+
+# chem1 |> kable(caption = "1-value columns dropped")
+
+chem1 <- setdiff(colnames(strwb_survey_chem), chem1$col_name)
+
+strwb_survey_chem <- strwb_survey_chem |> select(all_of(chem1))
+
+View(strwb_survey_chem)
+
+```
+
+Dropped one-value columns in `strwb_survey_mkt`.
+
+```{r}
+#| label: mkt 
+#| echo: false
+#| eval: true
+
+mkt1 <- drop_one_value_col(strwb_survey_mkt)
+
+# mkt1 |> kable(caption = "droping 1-value cols - mkt")
+
+mkt1 <- setdiff(colnames(strwb_survey_mkt), mkt1$col_name)
+
+strwb_survey_mkt <- strwb_survey_mkt |> select(all_of(mkt1))
+
+```
+
+##### Survey: Market
+
+Now, I further cleaned up both `strwb_survey_mkt` and `strwb_survey_chem`. First, I worked with the `strwb_survey_mkt`.
+
+To begin, I made the `Value` column into numeric values, which introduced `NA` values. Then, I changed the format of the numeric values, so they did not appear in scientific notation.
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+strwb_survey_mkt$Value <- as.numeric(str_replace_all(strwb_survey_mkt$Value,pattern = ",", replacement = "")) 
+
+strwb_survey_mkt$Value <- format(strwb_survey_mkt$Value, scientific = F)
+
+```
+
+To reduce the duplicity of `strwb_survey_mkt` with `strwb_census`, I separated the fresh and process market data in `strwb_survey_mkt` from the data on the pesticide application. With this, I created two new data frames: `strwb_survey_mkt` and `strwb_survey_pest`.
+
+##### Survey: Chemical
+
+Finally, I finished cleaning and organizing `strwb_survey_chem`.
+
+First, I selected the relevant columns.
+
+```{r}
+#| echo: false
+strwb_survey_chem <- strwb_survey_chem |>
+  select(1, 2, 7)
+```
+
+From here, I split up `temp43`.
+
+```{r}
+#| echo: false
+strwb_survey_chem <- strwb_survey_chem |>
+  separate_wider_delim(  cols = temp43,
+                         delim = "=",
+                         names = c("chemical",
+                                   "PC#"
+                         ),
+                         too_many = "error",
+                         too_few = "align_start"
+  )
+```
+
+Furthermore, I cleaned up both of the new `chemical` and the `PC#` columns by removing the unnecessary parentheses.
+
+```{r}
+#| echo: false
+strwb_survey_chem$chemical <- str_replace(strwb_survey_chem$chemical, "\\(", "")
+strwb_survey_chem$"PC#" <- str_replace(strwb_survey_chem$"PC#", "\\)", "")
+```
+
+I also want to separate the `chemical` column by chemical type and chemical name.
+
+```{r}
+#| echo: false
+strwb_survey_chem <- strwb_survey_chem |>
+  separate_wider_delim(  cols = chemical,
+                         delim = ":",
+                         names = c("chem_type",
+                                   "chemical"
+                         ),
+                         too_many = "error",
+                         too_few = "align_start"
+  )
+```
+
+Trimmed off the spaces on both sides of the `chemical` column.
+
+```{r}
+#| echo: false
+strwb_survey_chem$chemical <- str_trim(strwb_survey_chem$chemical, side = "both")
+```
+
+Trimmed the same to `chem_type`.
+
+```{r}
+#| echo: false
+strwb_survey_chem$chem_type <- str_trim(strwb_survey_chem$chem_type, side = "both")
+```
+
+Finally, trimmed the same with `PC#`.
+
+```{r}
+#| echo: false
+strwb_survey_chem$`PC#` <- str_trim(strwb_survey_chem$`PC#`, side = "both")
+```
+
+Now to remove the rows with `NA` values in the `PC#` column.
+
+```{r}
+#| echo: false
+strwb_survey_chem <- strwb_survey_chem |>
+  na.omit()
+```
+
+###### ***Addition to Strwb_Survey_Chem: WHO Chemical Toxicity***
+
+Now, to better understand the `strwb_survey_chem` data, I added two columns of data. We are first going to begin with "chemical toxicity" (`toxicity`).
+
+To gather this information, I used the World Health Organization (WHO)'s classification of pesticides by hazard \[[WHO, 2019](https://www.who.int/publications/i/item/9789240005662)\]. WHO's classification for pesticides are as follows: Class Ia, Ib, II, III or U. Class Ia is considered extremely hazardous, Class Ib is highly hazardous, Class II is moderately hazardous, and Class III is slightly hazardous \[[Wikipedia](https://en.wikipedia.org/wiki/Toxicity_class)\].
+
+I searched through each table to find each pesticide. Not all pesticides were on the table. To find the missing chemical toxicities, I used the large language model, Chat GPT \[[Chat GPT](https://chat.openai.com/)\], found information through Environmental Protection Agency Pesticide Fact Sheets \[[EPA-Acibenzolar](https://www3.epa.gov/pesticides/chem_search/reg_actions/registration/fs_PC-061402_11-Aug-00.pdf)\], \[[EPA-Ammonium.](https://www3.epa.gov/pesticides/chem_search/reg_actions/registration/fs_PC-031802_01-Nov-06.pdf)\], \[[EPA-Aureobasidium.](https://www.federalregister.gov/documents/2015/11/25/2015-29888/aureobasidium-pullulans-strains-dsm-14940-and-dsm-14941-exemption-from-the-requirement-of-a#:~:text=Based%20upon%20its%20evaluation%2C%20EPA,DSM%2014940%20and%20DSM%2014941.)\], \[[EPA-Canola](https://www3.epa.gov/pesticides/chem_search/reg_actions/registration/related_PC-011332_1-Oct-98.pdf)\], \[[EPA-Caprylic](https://www3.epa.gov/pesticides/chem_search/cleared_reviews/csr_PC-079029_31-Jul-02_a.pdf)\], \[[EPA-Capasaicin](https://archive.epa.gov/pesticides/reregistration/web/pdf/4018fact.pdf)\], \[[EPA-Clethodim](https://www3.epa.gov/pesticides/chem_search/cleared_reviews/csr_PC-121011_10-Jul-01_100.pdf)\], \[[EPA-Cyfluefenamid](https://www.federalregister.gov/documents/2018/02/09/2018-02670/cyflufenamid-pesticide-tolerances#:~:text=Cyflufenamid%20has%20low%20acute%20toxicity,target%20organ%20for%20cyflufenamid%20toxicity.)\], \[[EPA-Cytokinin](https://www3.epa.gov/pesticides/chem_search/reg_actions/reregistration/fs_G-29_29-Feb-96.pdf)\], and in other sources [@kilani-morakchi2021], \[[PubChem-Capric](https://pubchem.ncbi.nlm.nih.gov/compound/Capric-Acid)\], \[[Carfentrazone-ethyl](http://www.t3db.ca/toxins/T3D3805)\], \[[Pub-Chem-Copper.](https://pubchem.ncbi.nlm.nih.gov/compound/Cupric-Chloride#section=Toxicity-Data)\], \[[Copper-Octanoate](https://www.canada.ca/content/dam/hc-sc/migration/hc-sc/cps-spc/alt_formats/pdf/pubs/pest/_decisions/rd2015-19/rd2015-19-eng.pdf)\], \[[ACS-Copper-Oxide](https://pubs.acs.org/doi/10.1021/tx800064j)\], \[[Cyprodinil](https://www.sciencedirect.com/topics/pharmacology-toxicology-and-pharmaceutical-science/cyprodinil#:~:text=Toxicity%20of%20fungicides&text=Anilinopyrimidine%20class%20of%20fungicides%20includes,normal%20use%20(Table%2052.1).)\], \[[DECYLDIMETHYLOCTYL](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5266374/#:~:text=DDAC%20is%20known%20to%20especially,dermatitis%20(11%2C12).)\], \[[Didecyl.](https://www.federalregister.gov/documents/2012/08/08/2012-19399/residues-of-didecyl-dimethyl-ammonium-chloride-exemption-from-the-requirement-of-a-tolerance#:~:text=The%20Aliphatic%20Alkyl%20Quaternaries%20are,and%20inhalation%20routes%20of%20exposure.)\], \[[Dodine](http://extoxnet.orst.edu/pips/dodine.htm#:~:text=Acute%20toxicity%3A%20Because%20it%20may,inhalation%20or%20ingestion%20%5B40%5D.)\], \[[Sodium-Ferric-Ethyl.](https://www3.epa.gov/pesticides/chem_search/reg_actions/registration/fs_PC-139114_01-Dec-08.pdf)\], \[[Garlic-Oil](https://ask.usda.gov/s/article/Can-you-get-botulism-from-garlic-in-oil)\], \[[Glyphosate](https://extension.psu.edu/glyphosate-roundup-understanding-risks-to-human-health#:~:text=Glyphosate%20toxicity.&text=Glyphosate%20has%20lower%20acute%20toxicity,90%25%20of%20all%20herbicides1.)\], \[[Halosulfuron.](https://ipm.ucanr.edu/TOOLS/PNAI/pnaishow.php?id=38)\]. The rest of the missing values were found to be bacterium \[[Chat GPT](https://chat.openai.com/)\], which do not have a chemical toxicity, for `COPPER ETHANOLAMINE`, which did not have any clear information on toxicity.
+
+I classified each chemical toxicity by the string `Highly hazardous`, `Moderately hazardous`, `Unlikely to present acute hazard`, `Slightly hazardous`, `Fatal if inhaled`, `Toxic if inhaled`, `No significant acute toxicity` and `Not specified`.
+
+```{r}
+#| echo: false 
+strwb_survey_chem <- strwb_survey_chem |>
+  mutate(toxicity = case_when(
+    chemical %in% c("GARLIC OIL") ~ "Extremely hazardous",
+    chemical %in% c("ABAMECTIN", "DODINE") ~ "Highly hazardous",
+    chemical %in% c("ACEQUINOCYL", "BIFENTHRIN", "CARBARYL", "CHLORPYRIFOS", "CLOMAZONE", "COPPER HYDROXIDE", "CYPERMETHRIN", "DIAZINON", "DIFENOCONAZOLE", "DIMETHENAMID", "DIMETHYL DISULFIDE (DMDS)", "DODINE", "EMAMECTIN BENZOATE", "ENDOSULFAN", "FENAZAQUIN", "FENPROPATHRIN", "FENPYROXIMATE", "FLONICAMID", "FLUPYRADIFURONE", "FLUTRIAFOL", "GLUFOSINATE-AMMONIUM", "IMIDACLOPRID", "LAMBDA-CYHALOTHRIN", "METALDEHYDE", "METAM-SODIUM", "MYCLOBUTANIL", "NALED", "PARAQUAT", "PENDIMETHALIN", "PROPICONAZOLE", "PYRETHRINS", "PYRIDABEN", "SULFOXAFLOR", "TETRACONAZOLE", "THIAMETHOXAM", "THIRAM", "TRIFLUMIZOLE", "ZETA-CYPERMETHRIN", "ACETAMIPRID", "DECYLDIMETHYLOCTYL", "DIDECYL DIM. AMMON.", "DIDECYL DIM. AMMON.") ~ "Moderately hazardous",
+    chemical %in% c("BIFENAZATE", "BOSCALID", "CAPTON", "CHLORANTRANILIPROLE", "CHLOROTHALONIL", "CYANTRANILIPROLE", "CYAZOFAMID", "FENHEXAMID", "FLUDIOXONIL", "FLUROXYPYR 1-MHE", "FLUTOLANIL", "FOSETYL-AL", "HEXYTHIAZOX", "MANCOZEB", "NAPROPAMIDE", "NOVALURON", "OXYFLUORFEN", "PIPERONYL BUTOXIDE", "PYDIFLUMETOFEN", "PYRIPROXYFEN", "SIMAZINE", "SPINETORAM", "TERBACIL", "THIOPHANATE-METHYL", "TRIFLOXYSTROBIN", "AZOXYSTROBIN", "CAPTAN", "CYFLUFENAMID", "CYPRODINIL", "GLYPHOSATE POT. SALT") ~ "Unlikely to present acute hardzard",
+    chemical %in% c("BUPROFEZIN", "CLOPYRALID MONO SALT", "CYFLUMETOFEN", "ETHEPHON", "ETOXAZOLE", "FENBUTATIN-OXIDE", "FLUBENDIAMIDE", "FLUMIOXAZIN", "FLUOPYRAM", "FLUXAPYROXAD", "GLYPHOSATE ISO. SALT", "GLYPHOSATE ISO. SALT", "IPRODIONE", "MALATHION", "PENTHIOPYRAD", "PYRIMETHANIL", "SPINOSAD", "SPIROTETRAMAT", "BORAX DECAHYDRATE", "CYTOKININS") ~ "Slightly hazardous",
+    chemical %in% c("CHLOROPICRIN") ~ "Fatal if inhaled",
+    chemical %in% c("DICHLOROPROPENE", "METHYL BROMIDE") ~ "Toxic if inhaled",
+    chemical %in% c("ACIBENZOLAR-S-METHYL", "AMMONIUM PELARGONATE", "AUREOBASIDIUM PULLULANS DSM 14941", "AZADIRACHTIN", "CANOLA OIL", "CAPRIC ACID", "CAPRYLIC ACID", "CAPSAICIN", "CARFENTRAZONE-ETHYL", "CLETHODIM", "COPPER CHLORIDE HYD.", "COPPER OCTANOATE", "COPPER OXIDE", "DIMETHYLDIOCTYL", "FERRIC SODIUM EDTA") ~ "No significant acute toxicity",
+    chemical %in% c("COPPER ETHANOLAMINE") ~ "Unknown",
+    TRUE ~ "Bacteria"  
+  ))
+```
+
+###### ***Addition to Strwb_Survey_Chem: CAS Registry Number***
+
+Now, the second added column represents each pesticide's CAS Registry Number (`CAS#`). A CAS Registry Number allows each chemical compound, including molecular formulas, chemical structures, generic, systematic, common, and trade names, to have a clear identification number \[[CAS](https://www.cas.org/cas-data/cas-registry)\].
+
+To find the `CAS#`s of each pesticide, I used \[WHO, 2019\], \[CHAT GPT\], and, mainly, the United States Environmental Protection Agency's Pesticide Chemical Search \[[EPA](https://ordspub.epa.gov/ords/pesticides/f?p=chemicalsearch:1)\]. After discovering that some of the rows in `chemical` are actually bacterium, all values that do not have `CAS#`s are indicated as `bacteria`. All the other chemicals were matched with their appropriate `CAS#`.
+
+```{r}
+#| echo: false
+strwb_survey_chem <- strwb_survey_chem |>
+  mutate("CAS#" = case_when(
+    chemical %in% c("ABAMECTIN") ~ "71751-41-2",
+    chemical %in% c("ACEQUINOCYL") ~ "57960-19-7",
+    chemical %in% c("ACETAMIPRID") ~ "135410-20-7",
+    chemical %in% c("ACIBENZOLAR-S-METHYL") ~ "135158-54-2",
+    chemical %in% c("AUREOBASIDIUM PULLULANS DSM 14941") ~ "67891-88-7",
+    chemical %in% c("AZADIRACHTIN") ~ "108168-76-9",
+    chemical %in% c("AZOXYSTROBIN") ~ "131860-33-8",
+    chemical %in% c("BIFENAZATE") ~ "149877-41-8",
+    chemical %in% c("BIFENTHRIN") ~ "82657-04-3",
+    chemical %in% c("BORAX DECAHYDRATE") ~ "1303-96-4",
+    chemical %in% c("BOSCALID") ~ "188425-85-6",
+    chemical %in% c("BUPROFEZIN") ~ "69327-76-0",
+    chemical %in% c("CANOLA OIL") ~ "120962-03-0",
+    chemical %in% c("CAPRIC ACID") ~ "334-48-5",
+    chemical %in% c("CAPRYLIC ACID") ~ "124-07-2",
+    chemical %in% c("CAPSAICIN") ~ "404-86-4",
+    chemical %in% c("CAPTAN") ~ "133-06-2",
+    chemical %in% c("CARBARYL") ~ "63-25-2",
+    chemical %in% c("CARFENTRAZONE-ETHYL") ~ "128639-02-1",
+    chemical %in% c("CHLORANTRANILIPROLE") ~ "500008-45-7",
+    chemical %in% c("CHLOROPICRIN") ~ "76-06-2",
+    chemical %in% c("CHLOROTHALONIL") ~ "1897-45-6",
+    chemical %in% c("CHLORPYRIFOS") ~ "2921-88-2",
+    chemical %in% c("CLETHODIM") ~ "99129-21-2",
+    chemical %in% c("CLOMAZONE") ~ "81777-89-1",
+    chemical %in% c("CLOPYRALID MONO SALT") ~ "57754-85-5",
+    chemical %in% c("COPPER ETHANOLAMINE") ~ "14215-52-2",
+    chemical %in% c("COPPER HYDROXIDE") ~ "20427-59-2",
+    chemical %in% c("COPPER OCTANOATE") ~ "20543-04-8",
+    chemical %in% c("COPPER OXIDE") ~ "12158-97-3",
+    chemical %in% c("CYAZOFAMID") ~ "120116-88-3",
+    chemical %in% c("CYFLUFENAMID") ~ "180409-60-3",
+    chemical %in% c("CYFLUMETOFEN") ~ "400882-07-7",
+    chemical %in% c("CYPERMETHRIN") ~ "52315-07-8",
+    chemical %in% c("CYPRODINIL") ~ "121552-61-2",
+    chemical %in% c("CYTOKININS") ~ "525-79-1",
+    chemical %in% c("DECYLDIMETHYLOCTYL") ~ "32426-11-2",
+    chemical %in% c("DIAZINON") ~ "333-41-5",
+    chemical %in% c("DICHLOROPROPENE") ~ "78-88-6",
+    chemical %in% c("DIDECYL DIM. AMMON.") ~ "148788-55-0",
+    chemical %in% c("DIFENOCONAZOLE") ~ "	119446-68-3",
+    chemical %in% c("DIMETHENAMID") ~ "87674-68-8",
+    chemical %in% c("DIMETHYL DISULFIDE (DMDS)") ~ "624-92-0",
+    chemical %in% c("DIMETHYLDIOCTYL") ~ "5538-94-3",
+    chemical %in% c("DODINE") ~ "2439-10-3",
+    chemical %in% c("EMAMECTIN BENZOATE") ~ "155569-91-8",
+    chemical %in% c("ENDOSULFAN") ~ "	115-29-7",
+    chemical %in% c("ETHEPHON") ~ "16672-87-0",
+    chemical %in% c("ETOXAZOLE") ~ "153233-91-1",
+    chemical %in% c("FENAZAQUIN") ~ "120928-09-8",
+    chemical %in% c("FENBUTATIN-OXIDE") ~ "13356-08-6",
+    chemical %in% c("FENHEXAMID") ~ "	126833-17-8",
+    chemical %in% c("FENPROPATHRIN") ~ "39515-41-8",
+    chemical %in% c("FENPYROXIMATE") ~ "134098-61-6",
+    chemical %in% c("FERRIC SODIUM EDTA") ~ "15708-41-5",
+    chemical %in% c("FLONICAMID") ~ "158062-67-0",
+    chemical %in% c("FLUBENDIAMIDE") ~ "272451-65-7",
+    chemical %in% c("FLUDIOXONIL") ~ "131341-86-1",
+    chemical %in% c("FLUMIOXAZIN") ~ "103361-09-7",
+    chemical %in% c("FLUOPYRAM") ~ "658066-35-4",
+    chemical %in% c("FLUROXYPYR 1-MHE") ~ "69377-81-7",
+    chemical %in% c("FLUTOLANIL") ~ "66332-96-5",
+    chemical %in% c("FLUTRIAFOL") ~ "76674-21-0",
+    chemical %in% c("FLUXAPYROXAD") ~ "907204-31-3",
+    chemical %in% c("FOSETYL-AL") ~ "39148-24-8",
+    chemical %in% c("GARLIC OIL") ~ "8000-78-0",
+    chemical %in% c("GLUFOSINATE-AMMONIUM") ~ "77182-82-2",
+    chemical %in% c("GLYPHOSATE ISO. SALT") ~ "38641-94-0",
+    chemical %in% c("GLYPHOSATE POT. SALT") ~ "70901-12-1",
+    chemical %in% c("HALOSULFURON-METHYL") ~ "100784-20-1",
+    chemical %in% c("HEXYTHIAZOX") ~ "78587-05-0",
+    chemical %in% c("HYDROGEN PEROXIDE") ~ "7722-84-1",
+    chemical %in% c("IMIDACLOPRID") ~ "138261-41-3",
+    chemical %in% c("INDOLEBUTYRIC ACID") ~ "133-32-4",
+    chemical %in% c("IPRODIONE") ~ "36734-19-7",
+    chemical %in% c("IRON PHOSPHATE") ~ "10045-86-0",
+    chemical %in% c("KANTOR") ~ "145701-23-1",
+    chemical %in% c("LAMBDA-CYHALOTHRIN") ~ "91465-08-6",
+    chemical %in% c("MALATHION") ~ "121-75-5",
+    chemical %in% c("MANCOZEB") ~ "8018-01-7",
+    chemical %in% c("MEFENOXAM") ~ "70630-17-0",
+    chemical %in% c("METALDEHYDE") ~ "108-62-3",
+    chemical %in% c("METAM-POTASSIUM") ~ "137-41-7",
+    chemical %in% c("METAM-SODIUM") ~ "137-42-8",
+    chemical %in% c("METHOXYFENOZIDE") ~ "161050-58-4",
+    chemical %in% c("METHYL BROMIDE") ~ "74-83-9",
+    chemical %in% c("MINERAL OIL") ~ "8012-95-1",
+    chemical %in% c("MONO-POTASSIUM SALT") ~ "7447-40-7",
+    chemical %in% c("MUSTARD OIL") ~ "57-06-7",
+    chemical %in% c("MYCLOBUTANIL") ~ "88671-89-0",
+    chemical %in% c("NALED") ~ "300-76-5",
+    chemical %in% c("POTASSIUM SALTS") ~ "61790-44-1",
+    chemical %in% c("POTASSIUM SILICATE") ~ "1312-76-1",
+    chemical %in% c("PROPICONAZOLE") ~ "60207-90-1",
+    chemical %in% c("PYRACLOSTROBIN") ~ "175013-18-0",
+    chemical %in% c("PYRETHRINS") ~ "8003-34-7",
+    chemical %in% c("PYRIDABEN") ~ "96489-71-3",
+    chemical %in% c("PYRIMETHANIL") ~ "53112-28-0",
+    chemical %in% c("PYRIPROXYFEN") ~ "95737-68-1",
+    chemical %in% c("QUINOLINE") ~ "91-22-5",
+    chemical %in% c("SIMAZINE") ~ "122-34-9",
+    chemical %in% c("SOYBEAN OIL") ~ "8001-22-7",
+    chemical %in% c("SPINETORAM") ~ "187166-40-1",
+    chemical %in% c("SPINOSAD") ~ "283594-90-1",
+    chemical %in% c("SPIROTETRAMAT") ~ "135410-20-7",
+    chemical %in% c("SPIROMESIFEN") ~ "203313-25-1",
+    chemical %in% c("SULFENTRAZONE") ~ "122836-35-5",
+    chemical %in% c("SULFOXAFLOR") ~ "946578-00-3",
+    chemical %in% c("SULFUR") ~ "7704-34-9",
+    chemical %in% c("TERBACIL") ~ "5902-51-2",
+    chemical %in% c("TETRACONAZOLE") ~ "112281-77-3",
+    chemical %in% c("THIAMETHOXAM") ~ "153719-23-4",
+    chemical %in% c("THIOPHANATE-METHYL") ~ "23564-05-8",
+    chemical %in% c("THIRAM") ~ "137-26-8",
+    chemical %in% c("TRIFLOXYSTROBIN") ~ "141517-21-7",
+    chemical %in% c("TRIFLUMIZOLE") ~ "68694-11-1",
+    chemical %in% c("ZETA-CYPERMETHRIN") ~ "137497-61-1; 139203-31-9; 142443-95-6; 146909-55-9; 159940-28-0; 186554-45-0; 52315-07-8; 69865-47-0; 71697-59-1; 86752-99-0; 86753-92-6; 88161-75-5; 97955-44-7",
+    chemical %in% c("AMMONIUM PELARGONATE") ~ "144-08-3",
+    chemical %in% c("ISOFETAMID") ~ "163520-33-0", 
+    chemical %in% c("FLUPYRADIFURONE") ~ "951659-40-8",
+    chemical %in% c("NAPROPAMIDE") ~ "15299-99-7",
+    chemical %in% c("NOVALURON") ~ "116714-46-6",
+    chemical %in% c("OXYFLUORFEN") ~ "42874-03-3", 
+    chemical %in% c("PARAQUAT") ~ "1910-42-5", 
+    chemical %in% c("PENDIMETHALIN") ~ "40487-42-1",
+    chemical %in% c("PENTHIOPYRAD") ~ "183675-82-3",
+    chemical %in% c("PEROXYACETIC ACID") ~ "79-21-0",
+    chemical %in% c("PIPERONYL BUTOXIDE") ~ "51-03-6",
+    chemical %in% c("POLYOXIN D ZINC SALT") ~ "63548-53-8",
+    chemical %in% c("POTASSIUM BICARBON.") ~ "298-14-6",
+    chemical %in% c("CYANTRANILIPROLE") ~ "392850-27-3",
+    chemical %in% c("PYDIFLUMETOFEN") ~ "1269816-73-9",
+    chemical %in% c("COPPER CHLORIDE HYD.") ~ "10125-13-0",
+    TRUE ~ "Bacteria"  
+  ))
+```
+
+Quickly, I reorganized `strwb_survey_chem` to have the columns in a different order.
+
+```{r}
+#| echo: false
+strwb_survey_chem <- strwb_survey_chem |>
+  select(1:5, 7, 6)
+```
+
+### Websites
+
+\[CAS\](https://www.cas.org/cas-data/cas-registry)
+
+\[EPA\](https://ordspub.epa.gov/ords/pesticides/f?p=chemicalsearch:1)
+
+\[EPA Ammonium.\](https://www3.epa.gov/pesticides/chem_search/reg_actions/registration/fs_PC-031802_01-Nov-06.pdf)
+
+\[WHO, 2019\](https://www.who.int/publications/i/item/9789240005662)
+
+\[Wikipedia\](https://en.wikipedia.org/wiki/Toxicity_class)
 
 ### References
