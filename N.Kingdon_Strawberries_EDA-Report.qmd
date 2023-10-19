@@ -1,43 +1,50 @@
 ---
-title: "Strawberries in the United States: Exploratory Data Analysis"
+title: "Strawberries Production in the US"
 author: "Nicole Kingdon"
-subtitle: "GRS 615: Data Science in R"
+subtitle: "An Exploratory Data Analysis"
 date: 10-18-2023
 date-format: long
 format: pdf
+toc: true
 editor: visual
 bibliography: references.bib
 ---
 
-## Introduction
+{{< pagebreak >}}
 
-### Strawberries & Positive Health
+# Introduction
+
+## Strawberries & Positive Health
 
 Strawberries are a fruit that holds several minerals, vitamins, and nutrients [@craig1997], which have positive implications on human health [@afrin2016]. Specifically, strawberries have been found to help reduce likelihood of cancer, diabetes, obesity, neurodegeneration, cardiovascular disease, and metabolic syndrome (see Figure 1) [@afrin2016]. Although strawberries as a healthy food is the norm, pesticides appear to be harming the beneficial factors of this fruit.
 
 [![Health benefits of strawberries (Afrin et al., 2016)](Screenshot%202023-10-15%20at%202.09.03%20PM.png){fig-align="center"}](https://pubs.acs.org/doi/full/10.1021/acs.jafc.6b00857?casa_token=Yey0lgUCklwAAAAA%3ACiBJjsv3mVDKwh4SMJ2rsVq25ATRzyFtirLg_tTg1Rx-uo901_rYS4Ict3dcdlmBDLT4EGjoHKdDta8#)
 
-### Strawberries & Pesticides
+## Strawberries & Pesticides
 
 Pesticides are used on fruit and vegetable crops, including strawberries, with hopes to increase the quantity [@fenik2011]. Pesticides are made of chemical compounds to reduce or completely eliminate pests from impacting crops [@afrin2016]. These chemical compounds may increase the yield of the crop, but may have a large risk on human health. Additionally, they may contaminate bodies of water and soil with the chemicals, help pests develop resistance to the chemicals, and impact helpful organisms from persisting in areas where pesticides are used. Overall, there are positive and negative impacts of using pesticides (see Figure 2), but it is important to further examine these impacts, specifically on strawberries, to understand the implications of using such.
 
-[![Positive and negative implications of pesticides on fruit and vegetable crops (Fenik et al., 2011)](Screenshot%202023-10-15%20at%201.33.38%20PM.png){fig-align="center"}](https://www.sciencedirect.com/science/article/pii/S0165993611000938?casa_token=K6MASOVxhRsAAAAA:9McnNxBwxT2h9oXJg1FPvXtoYg_M14Q91ItmrqxsiQ5wZBVpZ2oSWHHitaCOJm9A_Fig87pkZg)
+[![Positive and negative implications of pesticides on fruit and vegetable crops (Fenik et al., 2011)](Screenshot%202023-10-15%20at%201.33.38%20PM.png){fig-align="center" width="406"}](https://www.sciencedirect.com/science/article/pii/S0165993611000938?casa_token=K6MASOVxhRsAAAAA:9McnNxBwxT2h9oXJg1FPvXtoYg_M14Q91ItmrqxsiQ5wZBVpZ2oSWHHitaCOJm9A_Fig87pkZg)
 
-### Organic Strawberries
+## Organic Strawberries
 
-Strawberries that use alternative and safer methods to production are considered organic [@verteramochiu2023]. Along with these alternative methods comes a higher cost of production and care, which increases the price to the consumer.
+Strawberries that are organic are simply strawberries. They use alternative and safer methods to production, and those fruits and vegetables, in this case strawberries, are considered organic [@verteramochiu2023]. Along with these alternative methods comes a higher cost of production and care, which increases the price to the consumer.
 
-### Analyzing Strawberry Production
+[![](mvbstv2n8rqy.jpg){fig-align="center" width="236"}](https://www.gardeningaustin.com/blog/organic-vs-conventional)
 
-The literature varies on if organic or non-organic is environmentally better [@afrin2016]. This exploratory data analysis on production of strawberries, which encompasses both processed (non-organic) and fresh (organic) market data, will help us better understand production of strawberries in the United States.
+## Analyzing Strawberry Production
 
-## Data Acquisition & Assessment
+The literature varies on if organic or non-organic is environmentally better [@afrin2016]. This exploratory data analysis on production of strawberries, which encompasses both processed (non-organic) and fresh (organic) market data, will help us better understand production of strawberries in the United States. Additionally, it dives deeper into the pesticide usage in states, which will provide more information as to the level of toxic ingredients that go into the production of non-organic (or conventional) strawberries .
 
-### USDA-NASS Data
+{{< pagebreak >}}
+
+# Data Acquisition & Assessment
+
+## USDA-NASS Data
 
 The data was acquired from [U.S. Department of Agriculture (USDA) and the National Agricultural Statistics Service (NASS)](https://quickstats.nass.usda.gov/). The data was uploaded for data cleaning and organizing and exploratory data analysis by Professor Haviland Wright, who chose the following data: [USDA-NASS](https://quickstats.nass.usda.gov/results/45FBC825-B104-38E2-9802-839F5F3C7036).
 
-The data frame uploaded to R is titled `strawberry` (see below).
+The data frame loaded into the environment is titled `strawberry`.
 
 ```{r warning=FALSE, message=FALSE}
 #| label: read data - glimpse 
@@ -48,15 +55,18 @@ library(dplyr)
 ```
 
 ```{r warning=FALSE, message=FALSE}
+#| echo: false
+
 strawberry <- read_csv("strawberry.csv", col_names = TRUE)
 ```
 
 ```{r}
 #| echo: false
+
 glimpse(strawberry)
 ```
 
-### Census Data
+## Census Data
 
 The data offers census data based on state that represents fresh market (organic) and process market (non-organic) sales.
 
@@ -68,7 +78,7 @@ census <- strawberry |>
 glimpse(census)
 ```
 
-### Survey Data
+## Survey Data
 
 Additionally, it holds survey information for each state, specifically indicating pesticides and bacterium used to preserve strawberry crop yield. In addition, it offers fresh and process market data.
 
@@ -80,27 +90,29 @@ survey <- strawberry |>
 glimpse(survey)
 ```
 
-### States
+## States
 
 There were 47 states (`r paste(strawberry|> distinct(State))`) with two states considered as "other states".
 
-### Years
+## Years
 
 The data was from the years `r paste(strawberry|> distinct(Year))`.
 
-### Assumptions & Motivations
+## Assumptions & Motivations
 
-#### Census Data
+### Census Data
 
 The `census` data was a nation-wide collection of data about the fresh and process markets related to strawberries. This data has values that are indicated as `(D)`, which are data that was withheld upon request by the strawberry market in that particular state. This could leave out important information in the data.
 
-#### Survey Data
+### Survey Data
 
 The `survey` data was collected via a survey sent out to each state in the United States. There were only 11 out of 47 states who returned the survey (`r paste(survey|> distinct(State))`), which includes the "other states". (The "other states" did not have any data relating to pesticides and bacterium.) This is only a `r paste(round((11/47)*100))`% response rate, which is not comprehensive of all the states and the entire United States process market. The states that did return the survey will still be able to show a report of pesticide and bacterium usage on their processed strawberry crops.
 
-## Data Cleaning & Organizing
+{{< pagebreak >}}
 
-### R Packages
+# Data Cleaning & Organizing
+
+## R Packages
 
 The following R packages were used to clean and organize the data:
 
@@ -112,23 +124,18 @@ library(stringr)
 library(dplyr)
 ```
 
-### Organization
+The data was organized into two main categories: `census` and `survey`. The `census` data was cleaned and organized to show fresh and process market sales, and the `survey` data consisted of pesticide and fertilizer usage.
 
-The data was organized into two data frames: `census` and `survey`. The `census` data frame was cleaned and organized to show fresh and process market sales, and the `survey` data frame was prepared to show pesticide and bacterium data.
-
-### Cleaning
-
-#### Initial Cleaning
+## Initial Data Cleaning & Organization
 
 *The following initial data cleaning derived from Professor Wright.*
 
-Removed columns with a single value in all columns
+Removed columns with a single value in all columns using a function. This function produced all columns with one value from the `strawberry` data frame. From there, all but the single value columns were added back to the data frame.
 
 ```{r}
 #| label: drop one-item columns
 #| echo: false
 
-## define function
 drop_one_value_col <- function(df){
 col_name <- NULL
 col_val <- NULL
@@ -150,32 +157,24 @@ if(is.null(col_name)){return("No Columns to drop")}else{
 
 str <- drop_one_value_col(strawberry)
 
-# str |> kable(caption = "Dropped Single-Value Columns: names and values")
-
 str <- str$col_name
 
 strawberry <- strawberry |> select(!all_of(str))
 ```
 
-Is every line associated with a state?
+Next, Professor Wright checked if every row in the `state` column held a value, which it did.
 
 ```{r}
 #| label: examine rows
 #| echo: false
 
-## state_all contains the number of rows containing data 
-## for each of the 47 strawberry-growing states.
 state_all <- strawberry |> group_by(State) |> count()
 
-## test if every row is associated with a state by summing the 
-## counts and testing for equality with the total rows in the 
-## data frame
-
-if(sum(state_all$n) == dim(strawberry)[1]){print("Every row has value in the State column.")}
+# if(sum(state_all$n) == dim(strawberry)[1]){print("Every row has value in the State column.")}
 
 ```
 
-<!-- ### Which state has the most rows? -->
+After that, Professor Wright checked to see what state had the most rows.
 
 ```{r}
 #| label: which state has the most rows
@@ -185,36 +184,13 @@ state_max <- state_all$State[which(state_all$n ==  max(state_all$n)  )]
 
 ```
 
-The data is organized by state. The state with the most rows is `r paste(state_max)`.
+The state with the most rows is `r paste(state_max)`.
 
-Examine the California data
-
-```{r}
-#| label: examine California data
-#| echo: false
-
-## filter rows of California data from the CENSUS data
-calif_census <- strawberry |> filter((State=="CALIFORNIA") & (Program=="CENSUS"))
-
-
-## ## filter rows of California data from the SURVEY data
-calif_survey <- strawberry |> filter((State=="CALIFORNIA") & (Program=="SURVEY"))
-
-census_col <- colnames(calif_census)
-
-survey_col <- colnames(calif_survey)
-
-```
-
-List of the composite columns
-
-Census: `r paste(census_col[c(6, 8)])`
-
-Survey: `r paste(survey_col[c(6,7,8)])`
-
-#### Separating Data Frames
+## Separating Data Frames
 
 *The following separation of data frames derived from Professor Wright.*
+
+By using `dplyr`, the `strawberry` data frame was split by `Program`. The rows that contained `CENSUS` were moved to `strwb_census` , and the rows containing `SURVEY` were moved to `strwb_survey`.
 
 ```{r}
 #| label: split srawberry into census and survey pieces
@@ -224,54 +200,23 @@ strwb_census <- strawberry |> filter(Program == "CENSUS")
 
 strwb_survey <- strawberry |> filter(Program == "SURVEY")
 
-## check that all of the rows are accounted for
-
-## nrow(strawberry) == (nrow(strwb_census) + nrow(strwb_survey))
-
-## Move marketing-related rows in strw_b_chem 
-## to strw_b_sales
-
-## clean up the environment
-
-rm(calif_census, calif_survey, state_all)
-
 ```
 
-The two new data frames are as follows: `strwb_census`, which holds all the `CENSUS` rows, and `strwb_survey`, which holds all the `SURVEY` rows.
+### Census
 
-#### Census
+After splitting `CENSUS` and `SURVEY` rows into two data frames, Professor Wright has first organized the `CENSUS` data.
 
-After splitting `CENSUS` and `SURVEY` rows into two data frames, Professor Wright has first organized the CENSUS data.
+First, he separated composite columns and cleaned the Value column.
 
-Separated composite columns and cleaned the Value column.
+The composite columns in the `strwb_census` are as follows: `Data Item` and `Domain category`.
 
-Composite columns in the `strwb_census`: Data Item, Domain category
+The column separators in `CENSUS` are ",", "-", ":".
 
-Column separators in CENSUS: ",", "-", ":"
-
-Separated `Data Item` into columns by ",".
+Separated `Data Item` into the new columns `Fruit`, `temp1`, `temp2`, and `temp3` by ",".
 
 ```{r}
 #| label: split Data Item
 #| echo: false
-
-## This will be done in stages --
-
-####################################################
-## split `Data Item` into "Fruit", "temp1","temp2","temp3"
-## then test the columns created for numer of distinct values
-## split the columns until you have columns of 
-## subjects, properties, values, and metrics (where metrics
-## are the units defined for the values)
-
-## In this case, the subject is State/Strawberries -- 
-## strawberries grown reported by state.
-
-## When using separate_wider_delim() when you don't know the 
-## number of columns the function will return,
-## use the "too_many" and "too_few" parameters to set up 
-## the function.  Generally, setting both parameters
-## to "error" will produce helpful error messages.
 
   strwb_census <- strwb_census |>
   separate_wider_delim(  cols = `Data Item`,
@@ -282,42 +227,13 @@ Separated `Data Item` into columns by ",".
                                  "temp3"),
                          too_many = "error",
                          too_few = "align_start"
-                       )
+  )
+```
 
-## Test the columns for the number of distinct values.
-## for example:
-##
-# a <- strwb_census |> distinct(Fruit)
-## The Fruit column only has one value: STRAWBERRIES the 
-## subject under investigation.
-##
-## Remember - the value in single-value columns
-## are often needed for Labels on tables and plots.
-##
-## Testing the temp1 column guides the next step.
-# a <- strwb_census |> distinct(temp1)
-## The "temp1" column has 4 distinct values
-##
-##    " ORGANIC - OPERATIONS WITH SALES"
-##    " ORGANIC - PRODUCTION"           
-##    " ORGANIC - SALES"                
-##    " ORGANIC"  
-##
-##  (Note the leading space in each string -- 
-##       which is fixed below.)
-##
-##  You can see that this column needs to be split between
-##  "organic" and the properties "OPERATIONS WITH SALES", 
-##  "PRODUCTION" and "SALES",  
-##    using " - " as the column delimiter.
-##
-##  The column "prop_acct" contains the properties,
-##   which are are accounting metrics related to
-##   strawberry growing operations.
+Separated `temp1` into the new columns `crop_type` and `prop_acct` by "-".
 
-
-############################################
-## split temp1 into crop_type, Prop_acct
+```{r}
+#| echo: false
 
 strwb_census <- strwb_census |>
   separate_wider_delim(  cols = temp1,
@@ -327,153 +243,89 @@ strwb_census <- strwb_census |>
                          too_many = "error",
                          too_few = "align_start"
                        )
+```
 
-## Once again, test the columns to plan your next step.
-##
-# a <- strwb_census |> distinct(crop_type)
-## Column "crop_type' has single value  "organic"
+To finish this first section of cleaning and organizing the `strwb_census` data frame, Professor Wright string trimmed both sides of the following three columns: `crop_type`, `temp2`, and `temp3`.
 
-# a <- strwb_census |> distinct(prop_acct)
-
-## 
-## The stringss in the "prop_acct" column are row labels
-## for values reported in the "Values" column.  
-
-##    "OPERATIONS WITH SALES"
-##    "PRODUCTION"           
-##    "SALES"               
-##    "NA"   
-
-## Note that the NA is in a row where the value 
-## is labeled in another column.
-##
-
-############################################
-## trim the strings
-## you can see which columns contain string values that need
-## to have leading or trailing spaces that need to be trimmed.
-
-
-# glimpse(strwb_census)
+```{r}
+#| echo: false
 
 strwb_census$crop_type <- str_trim(strwb_census$crop_type, side = "both")
 
 strwb_census$temp2 <- str_trim(strwb_census$temp2, side = "both")
 
 strwb_census$temp3 <- str_trim(strwb_census$temp3, side = "both")
-
-
-
-#############################################
-## split temp2 into market_type, measure
-
-##
-## The temp2 column requires a different logic.
-## 
-
-## start by looking at the unique entries in the temp2 column.
-
-# a <- strwb_census |> distinct(temp2)
-# 
-# temp2
-# 1  NA                                    
-# 2 " MEASURED IN CWT"                     
-# 3 " MEASURED IN $"                       
-# 4 " FRESH MARKET - OPERATIONS WITH SALES"
-# 5 " FRESH MARKET - SALES"                
-# 6 " PROCESSING - OPERATIONS WITH SALES"  
-# 7 " PROCESSING - SALES"   
-
-## temp2 contains data for three separate columns
-## 
-##   All Strawberries  (is this a Total?)
-##   Fresh Market
-##   Processing
-##
-##  To understand these labels see 
-##     "Strawberries: An Economic Assessment of the Feasibility
-##      of Providing Multiple-Peril Crop Insurance",
-##        prepared by Economic Research Service, USDA
-##             for the Federal Crop Insurance Corporation
-##                  October 31, 1994
-## 
-
 ```
 
-<!-- ## Create a "Fresh Market" column -->
+Now, Professor Haviland created a "Fresh Market" column. To do this, he duplicated the `temp2` column with the new column name as `Fresh Market`. Next, he removed all the cells in the new column that began with `MEASURED`. Same for the cells that begin with `PROCESSING`. He substituted `NA` values for empty strings. Finally, the `FRESH MARKET` parts of the strings were removed, as they were unneccesary anymore with the new column creation of `Fresh Market`.
 
 ```{r}
 #| label: create a fresh market column
 #| eval: true
 #| echo: false
 
-## make a copy of the temp2 column named `Fresh Market`.
 strwb_census <- strwb_census |> mutate(`Fresh Market` = temp2, .after = temp2)
 
-## Remove cells in `Fresh Market` column 
-##   that begin "MEASURED"
 strwb_census$`Fresh Market` <- strwb_census$`Fresh Market` |> str_replace( "^MEA.*", "")
 
-## Remove cells in `Fresh Market` column 
-##   that begin "PROCESSING" 
 strwb_census$`Fresh Market` <- strwb_census$`Fresh Market` |> str_replace( "^P.*", "")
 
-## substitute a space for NA in `Fresh Market` column
 strwb_census$`Fresh Market`[is.na(strwb_census$`Fresh Market`)] <- ""  
 
-## in temp2 column, remove cells that begin "FRESH"
- strwb_census$temp2 <- strwb_census$temp2 |> str_replace("^F.*", "")
-
-## Now fix the entries in the `Fresh Market` column
-##   Remove "FRESH MARKET - " from the cells
 strwb_census$`Fresh Market` <- strwb_census$`Fresh Market` |> str_replace("^FRESH MARKET - ", "")
 
 
 ```
 
-Created a "Process Market" column.
+Now, to manipulate the `temp2` column, Professor Wright removed all the cells that began with `FRESH`, which would now set up the cleaning and organizing to create the `Process Market` column.
+
+```{r}
+#| echo: false
+
+ strwb_census$temp2 <- strwb_census$temp2 |> str_replace("^F.*", "")
+```
+
+Professor Wright created a "Process Market" column.
+
+To do this, he followed the same method as `Fresh Market`, where he first duplicated `temp2`, then removed cells beginning with `MEASURED`, and removed `PROCESSING` from the beginning of the strings. and remove
 
 ```{r}
 #| label: make process market column
 #| echo: false
 
-## Make a copy of temp2 named `Process Market`
 strwb_census <- strwb_census |> mutate(`Process Market` = temp2, .after = temp2)
 
-## remove `Process Market` cells beginning "MEASURED"
 strwb_census$`Process Market` <-  strwb_census$`Process Market` |> str_replace("^MEA.*", "")
 
-## substitute space for NA in `Process Market` column
 strwb_census$`Process Market`[is.na(strwb_census$`Process Market`)] <- ""
 
-## In temp2, remove cells that begin "PROCESSING"
-strwb_census$temp2 <- strwb_census$temp2 |> str_replace("^P.*", "")
-
-## In `Processing Market`, remove "PROCESSING - " from cells
 strwb_census$`Process Market` <-  strwb_census$`Process Market` |> str_replace("PROCESSING - ", "") 
-
-
 ```
 
-Removed NA's from prop_acct, temp2, and temp3.
+Finally, removed the cells starting with `PROCESS MARKET` from `temp2`.
+
+```{r}
+#| echo: false
+
+strwb_census$temp2 <- strwb_census$temp2 |> str_replace("^P.*", "")
+```
+
+Next, Professor Wright removed NA's from `prop_acct`, `temp2`, and `temp3` by substituting a space.
 
 ```{r}
 #| label: remove NAs
 #| echo: false
 
-## substitute a space for NA in prop_acct column
 strwb_census$prop_acct[is.na(strwb_census$prop_acct)] <- "" 
 
-## substitute a space for NA in temp2 column
 strwb_census$temp2[is.na(strwb_census$temp2)] <- "" 
 
-## substitute a space for NA in temp2 column
 strwb_census$temp3[is.na(strwb_census$temp3)] <- "" 
 
 
 ```
 
-Combined temp2 with temp3 to create Metric column. Removed parts of string that did not matter. Relocated columns.
+From here, he combined `temp2` with `temp3` to create a `Metric` column. He also removed parts of string that did not matter, beginning with `MEASURED IN`. To finish, he moved the `Metric` column to the end.
 
 ```{r}
 #| label: final cleanup
@@ -481,23 +333,16 @@ Combined temp2 with temp3 to create Metric column. Removed parts of string that 
 
 strwb_census <- strwb_census |> unite(temp2, temp3, col="Metric", sep="")
 
-## Now fix the entries in the Metric column
-##   Remove "MEASURED IN " from the cells
 strwb_census$Metric <- strwb_census$Metric |> str_replace("MEASURED IN ", "")
 
-## move Metric to the end
 strwb_census <- strwb_census |> relocate(Metric, .before = Domain)
 
 strwb_census <- strwb_census |> relocate(`Process Market`, .before = Metric)
 
 strwb_census <- strwb_census |> rename(Totals = prop_acct)
-
-#drop_one_value_col(strwb_census)
-
-
 ```
 
-The Value column was transformed.
+The Value column was transformed. To do this, Professor Wright first pulled the `Value` column from `strwb_census` and put them into `vals`. From there, he string replaced all `vals` to remove the commas in the strings. From there, he converted the strings to numeric values. During this, `NA` values were automatically implemented.
 
 ```{r}
 #| label: define functions dcomma and footnote finder
@@ -506,84 +351,25 @@ The Value column was transformed.
 #| eval: true
 #| echo: false
 
-## remove commas from numbers
-## fix footnotes
-
-## basic tools
-
-## start by getting the Values column so you can work on it 
-
 vals <- strwb_census$Value
 
-
 c <- vals |> str_replace_all(",", "")
-# vals[1:20]
-# c[1:20]
 
-## Now notice what happens when the
-## the strings of digits are cast to numerics.
-
-## for example
 c <- as.numeric(c)
-# c[1:20]
 
+```
 
-### remove commas from Value entries
-dcomma <- function(c){
-  x_new <- as.numeric(gsub(",", "", c))
-  return(x_new)
-}
+After this, he aimed to find the location and value of the footnotes in the `Value` column. He implemented a string detection on this column, which helped discover that all the cells with `NA` values were also where the footnotes were located. The footnotes indicated that the `Value` was instructed to be left out during the data collection.
 
-
-
-#########################################  footnotes
-
-## finds single uppor case Character in parens in s2
-## e.g. "(D)"
-
-## To fine the location and value of the footnotes
+```{r}
+#| warning: false
+#| message: false
+#| eval: true
+#| echo: false
 
 v <- strwb_census$Value
 
-
-## find the footnote locations
-## fn_i: locations 
 fn_i <- v |> str_detect("^\\([:upper:]\\)$") ## returns
-
-
-## dcomma returns numbers and NA's
-v1 <- dcomma(v)
-
-## locations of NA's
-na_i <- is.na(v1)
-
-## Demonstration that the locations of the footnotes
-## are the same as the locations of the NA's
-
-# length(v) == sum(na_i == fn_i)
-
-## update dcomma()
-## Integrate transformation of the values column and 
-## reporting the footnote values.
-
-
-dcomma <- function(c){
-  suppressWarnings({
-  xnew = as.numeric(gsub(",", "", c))
-  fns = unique(c[is.na(xnew)])
-  vtran = list("new_vec" = xnew, "footnotes" = fns)
-  return(vtran)
-  })
-}
-
- 
-v_trns <- dcomma(v)
- 
-
- a <- v_trns$new_vec
- # a[1:20]
- 
- # v_trns$footnotes
 
 ```
 
@@ -633,11 +419,11 @@ strwb_census <- strwb_census |>
   arrange(State)
 ```
 
-#### Survey
+### Survey
 
 Professor Wright had organized the SURVEY data frame splitting the marketing, and production data from the chemical application data. In the strawberry data frame, The `CENSUS` rows contain marketing, sales, and production data. The `SURVEY` rows contain rows which may be redundant with the CENSUS rows and chemical application rows. These rows contain fresh and process market sales data, which have been removed.
 
-Began cleaning and organizing `strwb_survey`.
+Began cleaning and organizing `strwb_survey` by discovering what columns in this data frame that need to be split.
 
 ```{r}
 #| label: strwb_survey preliminary exploration
@@ -666,30 +452,7 @@ Began cleaning and organizing `strwb_survey`.
 
 ```
 
-<!-- ## Column analyses -->
-
-<!-- ### Period -->
-
-```{r}
-#| label: period column 
-#| echo: false
-
-per_c <- strwb_survey |> select(Period) |> distinct()
-per_c <- unlist(per_c)
-
-
-## the Period column denotes
-## three periods for data collection
-##    marketing year
-##    year
-##    year - Aug Forecast
-##
-
-
-
-```
-
-<!-- data item -->
+First, Professor Wright separated the `Data Item` column to `temp1`, `temp2`, `temp3`, and `temp4` by ",". Additionally, he separated `temp1` into `temp1a` and `temp1b`.
 
 ```{r}
 #| label: data item analysis
@@ -717,29 +480,9 @@ strwb_survey <- strwb_survey |>
                          too_many = "error",
                          too_few = "align_start"
                        )
-
-
-# a <- strwb_survey |> distinct(temp1a)
-## temp1a contains only 1 value -- STRAWBERRIES
-
-a <- strwb_survey |> distinct(temp1a)
-
-## It appears that strwb_survey intermingles
-## market data rows and chemical data rows, with
-## the indicators for the differet category of rows
-## being in the "Domain" column.
-## 
-
-## let's examing the domain column -- begining lby
-## separting with 
-## splitting Domain into columns
-
-
-
-
 ```
 
-<!-- Domain -->
+Next, he separated the `Domain` column into `temp22` and `temp23` by ",".
 
 ```{r}
 #| label: domain
@@ -756,21 +499,9 @@ strwb_survey <- strwb_survey |>
                          too_many = "error",
                          too_few = "align_start"
                        )
-
-
-t22 <- unique(strwb_survey$temp22)
-
-t23 <- unique(strwb_survey$temp23)
-
-## Now separate the first column of the Domain Category.
-## This iss allow the Chemical rows to be identified
-## easity
-
-
-
 ```
 
-<!-- Domain Category -->
+Also, he separated `Domain Category` into `temp42` and `temp43` by ",".
 
 ```{r}
 #| label: Domain Category
@@ -789,39 +520,23 @@ strwb_survey <- strwb_survey |>
                          too_few = "align_start"
                        )
 
+```
 
-## temp22 or temp42 or both == CHEMICAL 
-##  else the row contains market data
+To finish the `strwb_survey` cleaning and organizing, this data frame was split into two new data frames, where `strwb_survey_chem` holds pesticide data and `strwb_survey_mkt` contains all the surveyed market and fertilizer usage data.
 
-
+```{r}
+#| echo: false
 
 strwb_survey_chem <- strwb_survey |> filter((temp22 == "CHEMICAL") | (temp42 == "CHEMICAL"))
 
 strwb_survey_mkt <- strwb_survey |> filter(!((temp22 == "CHEMICAL") | (temp42 == "CHEMICAL")))
-
-
 ```
 
-Drop one-value columns in `strwb_survey_chem`.
+#### Survey: Market
 
-```{r}
-#| label: 1-value cols
-#| echo: false
-#| eval: true
+Now, I further cleaned up both `strwb_survey_mkt` and `strwb_survey_chem`. First, I worked with the `strwb_survey_mkt`.
 
-chem1 <-  drop_one_value_col(strwb_survey_chem)
-
-# chem1 |> kable(caption = "1-value columns dropped")
-
-chem1 <- setdiff(colnames(strwb_survey_chem), chem1$col_name)
-
-strwb_survey_chem <- strwb_survey_chem |> select(all_of(chem1))
-
-View(strwb_survey_chem)
-
-```
-
-Dropped one-value columns in `strwb_survey_mkt`.
+Quickly, to begin, Professor Wright Dropped one-value columns in `strwb_survey_mkt`.
 
 ```{r}
 #| label: mkt 
@@ -838,10 +553,6 @@ strwb_survey_mkt <- strwb_survey_mkt |> select(all_of(mkt1))
 
 ```
 
-##### Survey: Market
-
-Now, I further cleaned up both `strwb_survey_mkt` and `strwb_survey_chem`. First, I worked with the `strwb_survey_mkt`.
-
 To begin, I made the `Value` column into numeric values, which introduced `NA` values. Then, I changed the format of the numeric values, so they did not appear in scientific notation.
 
 ```{r}
@@ -855,13 +566,85 @@ strwb_survey_mkt$Value <- format(strwb_survey_mkt$Value, scientific = F)
 
 ```
 
-To reduce the duplicity of `strwb_survey_mkt` with `strwb_census`, I separated the fresh and process market data in `strwb_survey_mkt` from the data on the pesticide application. With this, I created two new data frames: `strwb_survey_mkt` and `strwb_survey_pest`.
+To reduce the duplicity of `strwb_survey_mkt` with `strwb_census`, I separated the fresh and process market data in `strwb_survey_mkt` from the data on the fertilizer usage.
 
-##### Survey: Chemical
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+strwb_survey_mkt <- strwb_survey_mkt |>
+  filter(temp2 == " BEARING - APPLICATIONS")
+
+```
+
+Next, I separated the `temp42` column to create the columns `type` and `fertilizer_type` by the delimiter ":".
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+strwb_survey_mkt <- strwb_survey_mkt |>
+  separate_wider_delim(  cols = temp42,
+                         delim = ":",
+                         names = c("type",
+                                 "fertilizer_type"),
+                         too_many = "error",
+                         too_few = "align_start"
+                       )
+```
+
+I cleaned up the `fertilizer_type` strings by removing the parentheses on both sides.
+
+```{r}
+#| echo: false
+
+strwb_survey_mkt$fertilizer_type <- str_replace(strwb_survey_mkt$fertilizer_type, "\\(", "")
+strwb_survey_mkt$fertilizer_type <- str_replace(strwb_survey_mkt$fertilizer_type, "\\)", "")
+```
+
+I also removed the empty spaces in these strings.
+
+```{r}
+#| echo: false
+
+strwb_survey_mkt$fertilizer_type <- str_trim(strwb_survey_mkt$fertilizer_type, side = "both")
+```
+
+Finally, I selected the rows that are relevant and renamed `temp3` to `measurement` and `temp4` to `avg`.
+
+```{r}
+#| echo: false
+
+strwb_survey_mkt <- strwb_survey_mkt |>
+  rename("measurement" = "temp3") |>
+  rename("avg" = "temp4") |>
+  select(1, 3, 7, 8, 10:12) 
+```
+
+#### Survey: Chemical
 
 Finally, I finished cleaning and organizing `strwb_survey_chem`.
 
-First, I selected the relevant columns.
+First, Professor Haviland dropped one-value columns in `strwb_survey_chem`.
+
+```{r}
+#| label: 1-value cols
+#| echo: false
+#| eval: true
+
+chem1 <-  drop_one_value_col(strwb_survey_chem)
+
+# chem1 |> kable(caption = "1-value columns dropped")
+
+chem1 <- setdiff(colnames(strwb_survey_chem), chem1$col_name)
+
+strwb_survey_chem <- strwb_survey_chem |> select(all_of(chem1))
+
+```
+
+Then, I selected the relevant columns.
 
 ```{r}
 #| echo: false
@@ -869,7 +652,7 @@ strwb_survey_chem <- strwb_survey_chem |>
   select(1, 2, 7)
 ```
 
-From here, I split up `temp43`.
+From here, I split up `temp43` into `chemical` and `PC#` by "=".
 
 ```{r}
 #| echo: false
@@ -936,7 +719,7 @@ strwb_survey_chem <- strwb_survey_chem |>
   na.omit()
 ```
 
-###### ***Addition to Strwb_Survey_Chem: WHO Chemical Toxicity***
+##### ***Addition to Strwb_Survey_Chem: WHO Chemical Toxicity***
 
 Now, to better understand the `strwb_survey_chem` data, I added two columns of data. We are first going to begin with "chemical toxicity" (`toxicity`).
 
@@ -971,7 +754,7 @@ strwb_survey_chem <- strwb_survey_chem |>
   ))
 ```
 
-###### ***Addition to Strwb_Survey_Chem: CAS Registry Number***
+##### ***Addition to Strwb_Survey_Chem: CAS Registry Number***
 
 Now, the second added column represents each pesticide's Chemical Abstract Service (CAS) Registry Number (`CAS#`). A CAS Registry Number allows each chemical compound, including molecular formulas, chemical structures, generic, systematic, common, and trade names, to have a clear identification number \[[CAS](https://www.cas.org/cas-data/cas-registry)\].
 
@@ -1143,4 +926,8 @@ Finally, to finish the data cleaning and organization of `strwb_survey_chem`, I 
 strwb_survey_treat <- strwb_survey_chem
 ```
 
-### References
+# Exploratory Data Analysis 
+
+Now, to
+
+# References
