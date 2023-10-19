@@ -195,6 +195,8 @@ By using `dplyr`, the `strawberry` data frame was split by `Program`. The rows t
 ```{r}
 #| label: split srawberry into census and survey pieces
 #| echo: false
+#| warning: false
+#| message: false
 
 strwb_census <- strawberry |> filter(Program == "CENSUS")
 
@@ -926,8 +928,101 @@ Finally, to finish the data cleaning and organization of `strwb_survey_chem`, I 
 strwb_survey_treat <- strwb_survey_chem
 ```
 
-# Exploratory Data Analysis 
+# Exploratory Data Analysis
 
-Now, to
+Now, to begin the Exploratory Data Analysis of the [USDA-NASS](https://quickstats.nass.usda.gov/results/45FBC825-B104-38E2-9802-839F5F3C7036) data set. First, I have reviewed each data frame associated with the data set. Next, I searched for and examined any missing values in the data frames. After that, I categorized the values in the data set to prepare for visualization. Finally, I analyzed the relationships in the data frames through visualization and located any outliers \[[EDA-Advice](https://www.indeed.com/career-advice/career-development/how-to-conduct-exploratory-data-analysis)\].
+
+## Review of Data Frames
+
+### strwb_census
+
+#### Columns & Values
+
+The column names in `strwb_census` are as follows: `Program`, `Year`, `State`, `Fruit`, `crop_type`, `Totals`, `Fresh Market`, `Process Market`, `Metric`, `Value`, and `CV (%)`.
+
+##### Program
+
+`Program` has a single string of `CENSUS` in every column. `CENSUS` represents that the data derived from a census of states based on their strawberry production.
+
+##### Year
+
+`Year` represents the years in which the data was collected. The years are as follows: `r paste(strwb_census |> distinct(Year))`.
+
+##### State
+
+`State` holds all the US states that held any census data on their strawberry production (`r paste(strwb_census |> distinct(State))`).
+
+##### Fruit
+
+`Fruit` has a single string of `STRAWBERRY`, which shows that all the data is based on this fruit.
+
+##### crop_type
+
+`crop_type` also has a single string, `ORGANIC`, which shows that the entirety of the production data is based on organic strawberries.
+
+##### Totals
+
+`Totals` holds three values: `r paste(strwb_census |> distinct(Totals))`. The `SALES` string reprents the sales of strawberries, `OPERATIONS WITH SALES` represents how many operating strawberry production with intent to sell, and `PRODUCTION` represents the amount of strawberries produced.
+
+##### Fresh Market
+
+`Fresh Market` holds two values: `OPERATIONS WITH SALES` and `SALES`. The definition of both of these values are the same as the `Totals` column.
+
+##### Process Market
+
+`Process Market` has the same strings as `Fresh Market`.
+
+##### Metric
+
+`Metric` has the following strings:`r paste(strwb_census |> distinct(Metric))`. The empty string holds no values because that row did not need a metric to help describe the data. `$` represents that the metric for the following `Value` column is in US Dollars. `CWT` is weight in 100's \[[CWT](https://mainlinemetals.com/resource-term/hundredweight-cwt/#:~:text=A%20hundredweight%20(CWT)%20measures%20the,in%20large%20volumes%20or%20weight.)\].
+
+##### Value
+
+The `Value` column holds numeric values that correspond with the strings in `Totals`, `Fresh Market`, and `Process Market`, as well as the `Metric` column.
+
+##### CV (%)
+
+Finally, the `CV (%)` column holds the co-effcients of variance of the numeric values in the `Value` column.
+
+##### Missing Values
+
+All rows with missing values in the `Value` column were omitted. The missing values represented values that were omitted by the state upon census data collection. These values have no purpose in the data analysis.
+
+##### Categorizing Values
+
+All columns, but `Value` and `CV (%)` hold nominal variables. Both the `Value` column and `CV (%)` hold interval variables.
+
+### Data Visualization
+
+#### Questions
+
+After analyzing the columns and values of `strwb_census` , I developed the following questions:
+
+1.  What state held the most operational strawberry sellers?
+
+2.  What states made the most money producing strawberries?
+
+3.  What states produced the most strawberries?
+
+These questions will be individually answered below via data visualization.
+
+##### What state held the most operational strawberry sellers? 
+
+```{r, echo=FALSE}
+
+filtered_data <- strwb_census |>
+  filter(Totals == "OPERATIONS WITH SALES")
+
+ggplot(data = filtered_data,
+       mapping = aes(x = State, y = Value)) +
+  geom_point() +
+  labs(
+    title = "States and Organic Operational Strawberry Sales",
+    x = "State",
+    y = "Operations with Sales",
+  ) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) 
+```
 
 # References
