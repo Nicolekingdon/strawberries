@@ -974,7 +974,11 @@ The column names in `strwb_census` are as follows: `Program`, `Year`, `State`, `
 
 ##### Metric
 
-`Metric` has the following strings:`r paste(strwb_census |> distinct(Metric))`. The empty string holds no values because that row did not need a metric to help describe the data. `$` represents that the metric for the following `Value` column is in US Dollars. `CWT` is weight in 100's \[[CWT](https://mainlinemetals.com/resource-term/hundredweight-cwt/#:~:text=A%20hundredweight%20(CWT)%20measures%20the,in%20large%20volumes%20or%20weight.)\].
+`Metric` has the following strings: `r paste(strwb_census |> distinct(Metric))`.
+
+The empty string holds no values because that row did not need a metric to help describe the data. `$` represents that the metric for the following `Value` column is in US Dollars. `CWT` is weight in 100's
+
+\[[CWT](https://mainlinemetals.com/resource-term/hundredweight-cwt/#:~:text=A%20hundredweight%20(CWT)%20measures%20the,in%20large%20volumes%20or%20weight.)\].
 
 ##### Value
 
@@ -982,7 +986,7 @@ The `Value` column holds numeric values that correspond with the strings in `Tot
 
 ##### CV (%)
 
-Finally, the `CV (%)` column holds the co-effcients of variance of the numeric values in the `Value` column.
+Finally, the `CV (%)` column holds the co-efficients of variance of the numeric values in the `Value` column.
 
 ##### Missing Values
 
@@ -998,7 +1002,7 @@ All columns, but `Value` and `CV (%)` hold nominal variables. Both the `Value` c
 
 After analyzing the columns and values of `strwb_census` , I developed the following questions:
 
-1.  What state held the most operational strawberry sellers?
+1.  What state held the most organic operational strawberry sellers?
 
 2.  What states made the most money producing strawberries?
 
@@ -1006,23 +1010,26 @@ After analyzing the columns and values of `strwb_census` , I developed the follo
 
 These questions will be individually answered below via data visualization.
 
-##### What state held the most operational strawberry sellers? 
+##### What state held the most organic operational strawberry sellers? 
 
-```{r, echo=FALSE}
+Figure 3 below shows all the US states who reported Census data from 2019 to 2021 for their organic strawberry operational sellers. Connecticut was the only state that had data for both 2019 and 2021, Alabama only reported data for 2019, and the remaining states only reported for 2021. The state with the most organic sellers was by far California (n = 142). Next was Oregon (n = 26), but was also significantly lower than California. The least number of sellers were located in Alabama (n = 2) with Georgia (n = 4) and Iowa (n = 4) following the next least.
 
+```{r}
 filtered_data <- strwb_census |>
   filter(Totals == "OPERATIONS WITH SALES")
 
 ggplot(data = filtered_data,
-       mapping = aes(x = State, y = Value)) +
-  geom_point() +
+       mapping = aes(x = Year, y = Value, fill = State)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~State, nrow = 3) +
+  geom_text(aes(label = Value), vjust = -0.5, position = position_dodge(width = 0.9)) +
   labs(
-    title = "States and Organic Operational Strawberry Sales",
-    x = "State",
-    y = "Operations with Sales",
+    title = "Figure 3. States and Organic Operational Strawberry Sales",
+    x = "Year",
+    y = "Operations with Sales"
   ) +
-  theme_classic() +
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) 
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1)) 
 ```
 
 # References
