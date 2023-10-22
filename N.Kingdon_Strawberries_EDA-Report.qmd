@@ -612,17 +612,27 @@ I also removed the empty spaces in these strings.
 #| echo: false
 
 strwb_survey_mkt$fertilizer_type <- str_trim(strwb_survey_mkt$fertilizer_type, side = "both")
+
 ```
 
-Finally, I selected the rows that are relevant and renamed `temp3` to `measurement` and `temp4` to `avg`.
+Finally, I selected the rows that are relevant and renamed `temp3` to `measurement` and `temp4` to `avg`. I also removed the empty spaces in these strings and made the `Value` column into numeric values, which introduced `NA` values, and those rows with `NA` values were omitted.
 
 ```{r}
 #| echo: false
+#| warning: false
+#| message: false
 
 strwb_survey_mkt <- strwb_survey_mkt |>
   rename("measurement" = "temp3") |>
   rename("avg" = "temp4") |>
   select(1, 3, 7, 8, 10:12) 
+
+strwb_survey_mkt$measurement <- str_trim(strwb_survey_mkt$measurement, side = "left")
+
+strwb_survey_mkt$Value <- as.numeric(strwb_survey_mkt$Value)
+
+strwb_survey_mkt <- strwb_survey_mkt |>
+  filter(!is.na(Value))
 ```
 
 #### Survey: Chemical
@@ -988,11 +998,11 @@ The `Value` column holds numeric values that correspond with the strings in `Tot
 
 Finally, the `CV (%)` column holds the co-efficients of variance of the numeric values in the `Value` column.
 
-##### Missing Values
+#### Missing Values
 
 All rows with missing values in the `Value` column were omitted. The missing values represented values that were omitted by the state upon census data collection. These values have no purpose in the data analysis.
 
-##### Categorizing Values
+#### Categorizing Values
 
 All columns, but `Value` and `CV (%)` hold nominal variables. Both the `Value` column and `CV (%)` hold interval variables.
 
@@ -1010,7 +1020,7 @@ After analyzing the columns and values of `strwb_census` , I developed the follo
 
 These questions will be individually answered below via data visualization.
 
-##### What state held the most organic operational strawberry sellers? 
+##### What state held the most organic operational strawberry sellers?
 
 Figure 3 below shows all the US states but California who reported Census data from 2019 to 2021 for their organic strawberry operational sellers. California was moved to Figure 5 as it was a significantly high outlier from the other states in operational sellers. Connecticut was the only state that had data for both 2019 and 2021, Alabama only reported data for 2019, and the remaining states only reported for 2021. The state with the most organic sellers was by far California (n = 142). Next was Oregon (n = 26), but was also significantly lower than California. The least number of sellers were located in Alabama (n = 2) with Georgia (n = 4) and Iowa (n = 4) following the next least.
 
@@ -1141,6 +1151,127 @@ ggplot(data = filtered_data6,
   ) +
   theme_bw() +
   scale_x_continuous(breaks = c(2019, 2021)) 
+```
+
+### strwb_survey_mkt
+
+#### Columns & Values
+
+There are five columns in `strwb_survey_mkt`: `Year`, `State`, `measurement`, `avg`, `type`, `fertilizer_type`, and `Value`. The columns represent the fertilizer type used for each year for each state and the amount of it that was used.
+
+##### Year
+
+`Year` holds two year values: `2018` and `2019`. This represents the year that the following values took place.
+
+##### State
+
+`State` has two US state values: `CALIFORNIA` and `FLORIDA`. Each of these represent the US state that returned data for the selected columns included in this data frame.
+
+##### measurement
+
+`measurement` has the following three values : `r paste(strwb_survey_mkt |> distinct(measurement))`. `MEASURED IN LB` represents that the following `Value` is in pounds (lbs). `MEASURED IN LB / ACRE / APPLICATION` is that the `Value` was measured in lbs divided by acreage of the farm and by the amount applied when used.
+
+##### avg
+
+`avg` holds `NA` and `avg` values. `avg` represents when an average was taken, and `NA` is present when an average was not needed for the type of measurement.
+
+##### type
+
+`type` holds the single string of `FERTILIZER`, which represents that all the rows hold data related to fertilizers.
+
+##### fertilizer_type
+
+`fertilizer_type` holds the following strings of fertilizer types used on the strawberry crops: `r paste(strwb_survey_mkt |> distinct(fertilizer_type))`.
+
+##### Value
+
+`Value` which holds numeric values that correspond with the `measurement` and `avg` columns to show the value related to the fertilizer usage.
+
+#### Missing Values
+
+All rows with data almost identical to `strwb_census` were removed. Additionally, all rows with `NA` values in the `Value` column were omitted, as they did not hold any meaningful data.
+
+#### Categorizing Variables
+
+All columns but `Value` and hold nominal variables. The `Value` column holds interval variables.
+
+### Data Visualization
+
+#### Questions
+
+The following questions will be answered via data visualization below:
+
+1.  What state used what fertilizer types? What fertilizers were used the most?
+
+2.  What state used the most pounds of fertilizer? 
+
+3.  What state used the most pounds per an acre per application of fertilizer? What fertilizer was used the most?
+
+##### What state used what fertilizer types?
+
+As shown in Figure 8 below, California used all four fertilizers on their crops (nitrogen, phosphate, potash, sulfur), and Florida used all but sulfur. The fertilizer used the most was nitrogen for both California (n = 16.9) and Florida (n = 28.7). Next most used was potash for both California (n = 14.3) and Florida (n = 25.2). Florida used more fertilizer than California for all three fertilizers they both used. Nitrogen and potash were used the most for both California and Florida (n = )
+
+```{r}
+#| echo: false
+
+filtered_data10 <- strwb_survey_mkt |>
+  filter(measurement == "MEASURED IN NUMBER") 
+
+ggplot(data = filtered_data10,
+       mapping = aes(x = fertilizer_type, y = Value, fill = State)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(
+    title = "Figure 8. Calfornia and Florida Fertiziler Usage on Strawberries",
+    x = "Fertilizer",
+    y = "Average Number of Ferilizer Usage",
+    caption = "Sulfur was only used in California"
+  ) +
+  theme_bw() 
+  
+```
+
+##### What state used the most pounds of fertilizer?
+
+Figure 9 shows the pounds (lbs) of fertilizer by type for the state of California, and Figure 10 shows such for Florida. California (N = 31,289,000) used far more lbs of fertilizer than Florida (N = 1,146,000) between the years of 2018 and 2019. California used far more lbs of all four fertilizers in 2018 than in 2019. Florida had the opposite with more fertilizer used in 2019 than 2018. 
+
+```{r}
+
+#| echo: false
+
+filtered_data11 <- strwb_survey_mkt |>
+  filter(measurement == "MEASURED IN LB" & State == "CALIFORNIA") 
+
+ggplot(data = filtered_data11,
+       mapping = aes(x = Year, y = (Value/10000))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~fertilizer_type, ncol = 2) +
+  labs(
+    title = "Figure 9. Pounds of Fertiziler Used on Strawberries in California",
+    x = "Fertilizer",
+    y = "lbs of Fertilizer Used (10000s)",
+  ) +
+  theme_bw() +
+  scale_x_continuous(breaks = c(2018, 2019)) 
+  
+```
+
+```{r}
+#| echo: false
+
+filtered_data12 <- strwb_survey_mkt |>
+  filter(measurement == "MEASURED IN LB" & State == "FLORIDA") 
+
+ggplot(data = filtered_data12,
+       mapping = aes(x = Year, y = (Value/10000))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~fertilizer_type, nrow = 1) +
+  labs(
+    title = "Figure 10. Pounds of Fertiziler Used on Strawberries in Florida",
+    x = "Fertilizer",
+    y = "lbs of Fertilizer Used (10000s)",
+  ) +
+  theme_bw() +
+  scale_x_continuous(breaks = c(2018, 2019)) 
 ```
 
 
