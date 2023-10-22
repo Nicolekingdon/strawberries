@@ -1012,11 +1012,13 @@ These questions will be individually answered below via data visualization.
 
 ##### What state held the most organic operational strawberry sellers? 
 
-Figure 3 below shows all the US states who reported Census data from 2019 to 2021 for their organic strawberry operational sellers. Connecticut was the only state that had data for both 2019 and 2021, Alabama only reported data for 2019, and the remaining states only reported for 2021. The state with the most organic sellers was by far California (n = 142). Next was Oregon (n = 26), but was also significantly lower than California. The least number of sellers were located in Alabama (n = 2) with Georgia (n = 4) and Iowa (n = 4) following the next least.
+Figure 3 below shows all the US states but California who reported Census data from 2019 to 2021 for their organic strawberry operational sellers. California was moved to Figure 5 as it was a significantly high outlier from the other states in operational sellers. Connecticut was the only state that had data for both 2019 and 2021, Alabama only reported data for 2019, and the remaining states only reported for 2021. The state with the most organic sellers was by far California (n = 142). Next was Oregon (n = 26), but was also significantly lower than California. The least number of sellers were located in Alabama (n = 2) with Georgia (n = 4) and Iowa (n = 4) following the next least.
 
 ```{r}
+#| echo: false
+
 filtered_data <- strwb_census |>
-  filter(Totals == "OPERATIONS WITH SALES")
+  filter(Totals == "OPERATIONS WITH SALES"& State != "CALIFORNIA")
 
 ggplot(data = filtered_data,
        mapping = aes(x = Year, y = Value, fill = State)) +
@@ -1024,12 +1026,122 @@ ggplot(data = filtered_data,
   facet_wrap(~State, nrow = 3) +
   geom_text(aes(label = Value), vjust = -0.5, position = position_dodge(width = 0.9)) +
   labs(
-    title = "Figure 3. States and Organic Operational Strawberry Sales",
+    title = "Figure 3. States* and Organic Operational Strawberry Sales",
     x = "Year",
-    y = "Operations with Sales"
+    y = "Operations with Sales",
+    caption = "*California was excluded due to extremely higher sales"
   ) +
   theme_bw() +
-  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1)) 
+  scale_x_continuous(breaks = c(2019, 2021)) 
 ```
+
+```{r}
+#| echo: false
+
+filtered_data4 <- strwb_census |>
+  filter(Totals == "OPERATIONS WITH SALES" & State == "CALIFORNIA")
+
+ggplot(data = filtered_data4,
+       mapping = aes(x = Year, y = Value, fill = State)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(
+    title = "Figure 3. California* and Organic Operational Strawberry Sales",
+    x = "Year",
+    y = "Operations with Sales",
+    caption = "*California was only included, as it was an outlier for the other data"
+  ) +
+  scale_x_continuous(breaks = c(2019, 2021)) +
+  theme_bw() 
+```
+
+##### What states made the most money producing strawberries?
+
+In Figure 4 below, there are varying amounts of money made on organic strawberry sales for each state who provided data. California's organic strawberry sales were moved to Figure 5 due to it being an extreme outlier with the highest sales high above every other state (n = 311,784,980). Massachusetts is the second highest in sales (n = 94,827). Georgia made the least in sales (n = 11,600), and Illnois was the second least (n = 16,000).
+
+```{r}
+#| echo: false
+
+filtered_data2 <- strwb_census |>
+  filter(Totals == "SALES" & State != "CALIFORNIA" & Metric == "$") 
+
+ggplot(data = filtered_data2,
+       mapping = aes(x = Year, y = (Value/1000), fill = State)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~State, ncol = 3) +
+  geom_text(aes(label = Value), vjust = -0.5, position = position_dodge(width = 0.9)) +
+  labs(
+    title = "Figure 4. States* and Organic Strawberry Sales in US Dollars",
+    x = "Year",
+    y = "Sales ($ in 1000s)",
+    caption = "*California was excluded due to extremely higher sales"
+  ) +
+  theme_bw() +
+  scale_x_continuous(breaks = c(2019, 2021)) 
+
+```
+
+```{r}
+#| echo: false
+
+filtered_data3 <- strwb_census |>
+  filter(Totals == "SALES" & State == "CALIFORNIA" & Metric == "$") 
+
+ggplot(data = filtered_data3,
+       mapping = aes(x = Year, y = (Value/100000), fill = State)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(
+    title = "Figure 5. California* and Organic Strawberry Sales in US Dollars",
+    x = "Year",
+    y = "Sales ($ in 100000s)",
+    caption = "*Only California was included, as it is an outlier from the other states"
+  ) +
+  scale_x_continuous(breaks = c(2019, 2021)) +
+  theme_bw() 
+```
+
+##### What states produced the most strawberries?
+
+On pattern with the other questions, all states but California were included in Figure 6 for the states who produced the most organic strawberry in hundredweight. Figure 7 holds the organic strawberry weight produced in tens of thousands. California has the highest hundredweight produced (n = 1,412,627). The next highest was Oklahoma (n = 1,858), which is still significantly lower than California. The lowest in organic strawberry production was Illnois (n = 53), and the next lowest was Kentucky (n = 62).
+
+```{r}
+#| echo: false
+
+filtered_data5 <- strwb_census |>
+  filter(Totals == "SALES" & State != "CALIFORNIA" & Metric == "CWT") 
+
+ggplot(data = filtered_data5,
+       mapping = aes(x = Year, y = Value, fill = State)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~State, ncol = 3) +
+  geom_text(aes(label = Value), vjust = -0.5, position = position_dodge(width = 0.9)) +
+  labs(
+    title = "Figure 6. States* and Organic Strawberry Sales in US Dollars",
+    x = "Year",
+    y = "Weight of Sales (100s)",
+    caption = "*California was excluded due to being an extreme outlier"
+  ) +
+  theme_bw() +
+  scale_x_continuous(breaks = c(2016, 2021)) 
+```
+
+```{r}
+#| echo: false
+
+filtered_data6 <- strwb_census |>
+  filter(Totals == "SALES" & State == "CALIFORNIA" & Metric == "CWT") 
+
+ggplot(data = filtered_data6,
+       mapping = aes(x = Year, y = (Value/100), fill = State)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(
+    title = "Figure 7. California* and Organic Strawberry Sales in US Dollars",
+    x = "Year",
+    y = "Weight of Sales (10000s)",
+    caption = "*California was only included, as it was an extreme outlier"
+  ) +
+  theme_bw() +
+  scale_x_continuous(breaks = c(2019, 2021)) 
+```
+
 
 # References
