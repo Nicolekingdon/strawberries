@@ -661,7 +661,7 @@ Then, I selected the relevant columns.
 ```{r}
 #| echo: false
 strwb_survey_chem <- strwb_survey_chem |>
-  select(1, 2, 7)
+  select(1, 2, 4, 5, 6, 7, 10)
 ```
 
 From here, I split up `temp43` into `chemical` and `PC#` by "=".
@@ -723,12 +723,37 @@ Finally, trimmed the same with `PC#`.
 strwb_survey_chem$`PC#` <- str_trim(strwb_survey_chem$`PC#`, side = "both")
 ```
 
-Now to remove the rows with `NA` values in the `PC#` column.
+Now to remove the paren on the `TOTAL` values in the `chemical` column.
 
 ```{r}
 #| echo: false
+
+strwb_survey_chem$chemical <- str_replace(strwb_survey_chem$chemical, "\\)", "")
+```
+
+Then, I removed the commas and changed the values in `Value` to numbers instead of strings. This introduced `NA` values, and I dropped all the columns with `NA`.
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+strwb_survey_chem$Value <- as.numeric(str_replace_all(strwb_survey_chem$Value,pattern = ",", replacement = "")) 
+
 strwb_survey_chem <- strwb_survey_chem |>
-  na.omit()
+  filter(!is.na(Value))
+
+strwb_survey_chem$Value <- format(strwb_survey_chem$Value, scientific = F)
+```
+
+Finally, to rename `temp3` to `measurement` and `temp4` to `avg`.
+
+```{r}
+#| echo: false
+
+strwb_survey_chem <- strwb_survey_chem |>
+  rename(measurement = temp3) |>
+  rename(avg = temp4)
 ```
 
 ##### ***Addition to Strwb_Survey_Chem: WHO Chemical Toxicity***
@@ -917,7 +942,7 @@ Quickly, I reorganized `strwb_survey_chem` to have the columns in a different or
 ```{r}
 #| echo: false
 strwb_survey_chem <- strwb_survey_chem |>
-  select(1:5, 7, 6)
+  select(1, 2, 6, 7, 8, 3, 4, 10, 11, 9)
 ```
 
 I also changed the column name from `chemical` to `strwb_treatment`, as bacterium are not chemicals.
@@ -1156,6 +1181,7 @@ ggplot(data = filtered_data6,
   scale_x_continuous(breaks = c(2019, 2021)) 
 ```
 
+{{< pagebreak >}}
 ### strwb_survey_mkt
 
 #### Columns & Values
@@ -1316,26 +1342,163 @@ ggplot(data = filtered_data13,
   scale_y_continuous(breaks = c(5, 10, 15, 20, 25, 30)) 
 ```
 
+{{< pagebreak >}}
 ### strwb_survey_treat
 
 #### Columns & Values
 
 The columns in `strwb_survey_treat` are as follows: `r paste(colnames(strwb_survey_treat))`. Each of the values in the columns are explained below.
 
+##### Year
+
 `Year` represents the year in which the values in the row are from. The years are as follows: `r paste(strwb_survey_treat |> distinct(Year))`.
+
+##### State
 
 `State` has the following strings: `r paste(strwb_survey_treat |> distinct(State))`. Each as these show what US state the survey data was retrieved from.
 
+##### chem_type
+
 `chem_type` holds strings representing categories of pesticides used: `r paste(strwb_survey_treat |> distinct(chem_type))`.
+
+##### strwb_treatment
 
 `strwb_treatment` represents the chemical or bacteria used on the strawberry crops: `r paste(strwb_survey_treat |> distinct(strwb_treatment))`.
 
+##### PC
+
 `PC#` represents the treatment identification number, Pesticide Chemical Code. These are numeric values.
+
+##### CAS
 
 `CAS#` either had the Chemical Abstracts Service number or is indicated as `Bacteria`, as bacterium do not have CAS#s.
 
+##### measurement
+
+`measurement` has the following strings that represents the metric that the values were measured in: `r paste(strwb_survey_treat |> distinct(measurement))`.
+
+##### avg
+
+The `avg` column has both `NA` values and the string `avg`, which represents if the numeric value it is describing is an average or not.
+
+##### CAS
+
+`CAS#` either had the Chemical Abstracts Service number or is indicated as `Bacteria`, as bacterium do not have CAS#s.
+
+##### toxicity
+
+`toxicity` holds the following strings: `r paste(strwb_survey_treat |> distinct(toxicity))`. These are based on the World Organization Health Organization's Pesticide Toxicity Classification \[[WHO, 2019](https://www.who.int/publications/i/item/9789240005662)\] (see more information above).
+
+##### Value
+
+Finally, the `Value` column holds numeric values that are described by the `avg` and `measurement` columns.
+
+#### Missing Values
+
+All missing values in `PC#` were dropped,
+
+#### Categorizing Variables
+
+THe values in `toxicity` can be ranked high to low, therefore they are categorical variables. `CAS#`, `strwb_treatment`, `chem_type`, `State`, `Year`, `avg`, `measurement` and `PC#` are all nominal variables. `Value` holds interval variables.
+
+### Data Visualization
+
+#### Questions
+
+1.  What pesticide category was used the most?
+
+2.  What pesticides were most toxic?
+
+##### What pesticide category was used the most?
+
+```{r}
+
+new_data <- strwb_survey_treat |>
+  filter(strwb_treatment == "TOTAL" & State != "CALIFORNIA" & State != "FLORIDA") 
+
+new_data$Value <- as.numeric(new_data$Value)
+
+ggplot(data = new_data,
+       mapping = aes(x = Year, y = (Value/100), fill = State)) +
+  geom_bar(stat = "identity", position = "dodge") +  
+  labs(
+    title = "Figure 12. Pounds of Different Pesticide Categories Used",
+    subtitle = "in Oregon and Washington",
+    x = "Year",
+    y = "lbs (100s)"
+  ) +
+  theme_bw() +
+  facet_wrap(~chem_type) +
+  scale_x_continuous(breaks = 2016) 
 
 
-Finally, `toxicity` holds the following strings: `r paste(strwb_survey_treat |> distinct(toxicity))`. These are based on the World Organization Health Organization's Pesticide Toxicity Classification \[[WHO, 2019](https://www.who.int/publications/i/item/9789240005662)\] (see more information above).
+```
+
+```{r}
+new_data2 <- strwb_survey_treat |>
+  filter(strwb_treatment == "TOTAL" & State == "CALIFORNIA") 
+
+new_data2$Value <- as.numeric(new_data2$Value)
+
+ggplot(data = new_data2,
+       mapping = aes(x = Year, y = (Value/100000))) +
+  geom_bar(stat = "identity", position = "dodge") +  
+  labs(
+    title = "Figure 12. Pounds of Different Pesticide Categories Used",
+    subtitle = "in California",
+    x = "Year",
+    y = "lbs (1000000s)"
+  ) +
+  theme_bw() + 
+  scale_x_continuous(breaks = c(2016, 2018, 2019, 2021)) +
+  facet_wrap(~chem_type)
+```
+
+```{r}
+new_data3 <- strwb_survey_treat |>
+  filter(strwb_treatment == "TOTAL" & State == "FLORIDA") 
+
+new_data3$Value <- as.numeric(new_data3$Value)
+
+ggplot(data = new_data3,
+       mapping = aes(x = Year, y = (Value / 10000))) +
+  geom_bar(stat = "identity", position = "dodge") +  
+  labs(
+    title = "Figure 12. Pounds of Different Pesticide Categories Used",
+    subtitle = "in Florida",
+    x = "Year",
+    y = "lbs (10000s)"
+  ) +
+  theme_bw() + 
+  scale_x_continuous(breaks = c(2016, 2018, 2019, 2021)) +
+  facet_wrap(~chem_type)
+```
+
+{{< pagebreak >}}
+
+##### What pesticides were most toxic?
+
+```{r}
+
+
+
+new_data11 <- strwb_survey_treat |>
+  group_by(toxicity) 
+
+new_data11 <- new_data11 |>
+  mutate(toxicity = case_when(
+    strwb_treatment %in% c("GARLIC OIL") ~ "Extremely hazardous",
+    strwb_treatment %in% c("ABAMECTIN", "DODINE", "MINERAL OIL", "MUSTARD OIL", "ALKYL. DIM. BENZ. AM") ~ "Highly hazardous",
+    strwb_treatment %in% c("ACEQUINOCYL", "BIFENTHRIN", "CARBARYL", "CHLORPYRIFOS", "CLOMAZONE", "COPPER HYDROXIDE", "CYPERMETHRIN", "DIAZINON", "DIFENOCONAZOLE", "DIMETHENAMID", "DIMETHYL DISULFIDE (DMDS)", "DODINE", "EMAMECTIN BENZOATE", "ENDOSULFAN", "FENAZAQUIN", "FENPROPATHRIN", "FENPYROXIMATE", "FLONICAMID", "FLUPYRADIFURONE", "FLUTRIAFOL", "GLUFOSINATE-AMMONIUM", "IMIDACLOPRID", "LAMBDA-CYHALOTHRIN", "METALDEHYDE", "METAM-SODIUM", "MYCLOBUTANIL", "NALED", "PARAQUAT", "PENDIMETHALIN", "PROPICONAZOLE", "PYRETHRINS", "PYRIDABEN", "SULFOXAFLOR", "TETRACONAZOLE", "THIAMETHOXAM", "THIRAM", "TRIFLUMIZOLE", "ZETA-CYPERMETHRIN", "ACETAMIPRID", "DECYLDIMETHYLOCTYL", "DIDECYL DIM. AMMON.", "DIDECYL DIM. AMMON.", "CAPSICUM OLEORESIN EXTRACT") ~ "Moderately hazardous",
+    strwb_treatment %in% c("BIFENAZATE", "BOSCALID", "CAPTON", "CHLORANTRANILIPROLE", "CHLOROTHALONIL", "CYANTRANILIPROLE", "CYAZOFAMID", "FENHEXAMID", "FLUDIOXONIL", "FLUROXYPYR 1-MHE", "FLUTOLANIL", "FOSETYL-AL", "HEXYTHIAZOX", "MANCOZEB", "NAPROPAMIDE", "NOVALURON", "OXYFLUORFEN", "PIPERONYL BUTOXIDE", "PYDIFLUMETOFEN", "PYRIPROXYFEN", "SIMAZINE", "SPINETORAM", "TERBACIL", "THIOPHANATE-METHYL", "TRIFLOXYSTROBIN", "AZOXYSTROBIN", "CAPTAN", "CYFLUFENAMID", "CYPRODINIL", "GLYPHOSATE POT. SALT", "HYDROGEN PEROXIDE", "ISOFETAMID", "POTASSIUM SALTS", "SULFUR", "BACILLUS PUMILUS", "HELICOVERPA ZEA NPV", "NEEM OIL", "PSEUDOMONAS CHLORORAPHIS STRAIN AFS009", "TRICHODERMA HARZ.") ~ "Unlikely to present acute hazard",
+    strwb_treatment %in% c("BUPROFEZIN", "CLOPYRALID MONO SALT", "CYFLUMETOFEN", "ETHEPHON", "ETOXAZOLE", "FENBUTATIN-OXIDE", "FLUBENDIAMIDE", "FLUMIOXAZIN", "FLUOPYRAM", "FLUXAPYROXAD", "GLYPHOSATE ISO. SALT", "GLYPHOSATE ISO. SALT", "IPRODIONE", "MALATHION", "PENTHIOPYRAD", "PYRIMETHANIL", "SPINOSAD", "SPIROTETRAMAT", "BORAX DECAHYDRATE", "CYTOKININS", "MONO-POTASSIUM SALT", "SPIROMESIFEN", "SULFENTRAZONE") ~ "Slightly hazardous",
+    strwb_treatment %in% c("CHLOROPICRIN", "PYRACLOSTROBIN", "PETROLEUM DISTILLATE") ~ "Fatal if inhaled",
+    strwb_treatment %in% c("DICHLOROPROPENE", "METHYL BROMIDE", "PEROXYACETIC ACID", "QUINOLINE") ~ "Toxic if inhaled",
+    strwb_treatment %in% c("ACIBENZOLAR-S-METHYL", "AMMONIUM PELARGONATE", "AUREOBASIDIUM PULLULANS DSM 14941", "AZADIRACHTIN", "CANOLA OIL", "CAPRIC ACID", "CAPRYLIC ACID", "CAPSAICIN", "CARFENTRAZONE-ETHYL", "CLETHODIM", "COPPER CHLORIDE HYD.", "COPPER OCTANOATE", "COPPER OXIDE", "DIMETHYLDIOCTYL", "FERRIC SODIUM EDTA", "IRON PHOSPHATE", "MEFENOXAM", "METAM-POTASSIUM", "METHOXYFENOZIDE", "POLYOXIN D ZINC SALT", "POTASSIUM BICARBON.", "POTASSIUM SILICATE", "SOYBEAN OIL", "STREPTOMYCES LYDICUS", "BACILLUS AMYLOLIQUEFAC F727", "BACILLUS AMYLOLIQUEFACIENS MBI 600", "BACILLUS AMYLOLIQUEFACIENS STRAIN D747", "BACILLUS SUBTILIS", "AUREOBASIDIUM PULLULANS DSM 14940", "BACILLUS SUBT. GB03", "BEAUVERIA BASSIANA", "BLAD", "BT KURSTAK ABTS-1857", "BT KURSTAKI EG7841", "BT KURSTAKI SA-11", "BT KURSTAKI SA-12", "BT SUB AIZAWAI GC-91", "BT SUBSP KURSTAKI EVB-113-19", "BURKHOLDERIA A396 CELLS & MEDIA", "CHROMOBAC SUBTSUGAE PRAA4-1 CELLS AND SPENT MEDIA", "GLIOCLADIUM VIRENS", "HARPIN A B PROTEIN", "PAECILOMYCES FUMOSOR", "REYNOUTRIA SACHALINE", "TRICHODERMA VIRENS STRAIN G-41") ~ "No significant acute toxicity",
+    TRUE ~ "Unknown"  
+  ))
+
+```
+
 
 # References
