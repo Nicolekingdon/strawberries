@@ -762,7 +762,7 @@ Now, to better understand the `strwb_survey_chem` data, I added two columns of d
 
 To gather this information, I used the World Health Organization (WHO)'s classification of pesticides by hazard \[[WHO, 2019](https://www.who.int/publications/i/item/9789240005662)\]. Table 1 shows the WHO's toxicity classification for pesticides.
 
-[![Table 1. World Health Organization Pesticide Toxicity Classification](straw_health.png){fig-align="center" width="459"}](https://www.researchgate.net/publication/278283443_Relative_toxicity_of_pesticides_in_the_developing_world)
+[![World Health Organization Pesticide Toxicity Classification](straw_health.png){fig-align="center" width="459"}](https://www.researchgate.net/publication/278283443_Relative_toxicity_of_pesticides_in_the_developing_world)
 
 Additionally, some chemicals are presented as fatal or toxic if inhaled, as they are gaseous or volatile fumigants \[[WHO, 2019](https://www.who.int/publications/i/item/9789240005662)\]. Others are classified as "unlikely to present acute hazard" by WHO \[[WHO, 2019](https://www.who.int/publications/i/item/9789240005662)\], which means that they will not present any hazard if used properly. Furthermore, they are also classified as "no significant acute toxicity" when they are not in the WHO classification and are found to be non-toxic, mostly discovered through the Environmental Protection Agency (EPA) \[[EPA](https://www.epa.gov/)\].
 
@@ -966,47 +966,45 @@ strwb_survey_treat <- strwb_survey_chem
 
 Now, to begin the Exploratory Data Analysis of the [USDA-NASS](https://quickstats.nass.usda.gov/results/45FBC825-B104-38E2-9802-839F5F3C7036) data set. First, I have reviewed each data frame associated with the data set. Next, I searched for and examined any missing values in the data frames. After that, I categorized the values in the data set to prepare for visualization. Finally, I analyzed the relationships in the data frames through visualization and located any outliers \[[EDA-Advice](https://www.indeed.com/career-advice/career-development/how-to-conduct-exploratory-data-analysis)\].
 
-## Review of Data Frames
+## Review of Data Frames: strwb_census
 
-### strwb_census
-
-#### Columns & Values
+### Columns & Values
 
 The column names in `strwb_census` are as follows: `Program`, `Year`, `State`, `Fruit`, `crop_type`, `Totals`, `Fresh Market`, `Process Market`, `Metric`, `Value`, and `CV (%)`.
 
-##### Program
+#### Program
 
 `Program` has a single string of `CENSUS` in every column. `CENSUS` represents that the data derived from a census of states based on their strawberry production.
 
-##### Year
+#### Year
 
 `Year` represents the years in which the data was collected. The years are as follows: `r paste(strwb_census |> distinct(Year))`.
 
-##### State
+#### State
 
 `State` holds all the US states that held any census data on their strawberry production (`r paste(strwb_census |> distinct(State))`).
 
-##### Fruit
+#### Fruit
 
 `Fruit` has a single string of `STRAWBERRY`, which shows that all the data is based on this fruit.
 
-##### crop_type
+#### crop_type
 
 `crop_type` also has a single string, `ORGANIC`, which shows that the entirety of the production data is based on organic strawberries.
 
-##### Totals
+#### Totals
 
 `Totals` holds three values: `r paste(strwb_census |> distinct(Totals))`. The `SALES` string reprents the sales of strawberries, `OPERATIONS WITH SALES` represents how many operating strawberry production with intent to sell, and `PRODUCTION` represents the amount of strawberries produced.
 
-##### Fresh Market
+#### Fresh Market
 
 `Fresh Market` holds two values: `OPERATIONS WITH SALES` and `SALES`. The definition of both of these values are the same as the `Totals` column.
 
-##### Process Market
+#### Process Market
 
 `Process Market` has the same strings as `Fresh Market`.
 
-##### Metric
+#### Metric
 
 `Metric` has the following strings: `r paste(strwb_census |> distinct(Metric))`.
 
@@ -1014,19 +1012,19 @@ The empty string holds no values because that row did not need a metric to help 
 
 \[[CWT](https://mainlinemetals.com/resource-term/hundredweight-cwt/#:~:text=A%20hundredweight%20(CWT)%20measures%20the,in%20large%20volumes%20or%20weight.)\].
 
-##### Value
+#### Value
 
 The `Value` column holds numeric values that correspond with the strings in `Totals`, `Fresh Market`, and `Process Market`, as well as the `Metric` column.
 
-##### CV (%)
+#### CV (%)
 
 Finally, the `CV (%)` column holds the co-efficients of variance of the numeric values in the `Value` column.
 
-#### Missing Values
+### Missing Values
 
 All rows with missing values in the `Value` column were omitted. The missing values represented values that were omitted by the state upon census data collection. These values have no purpose in the data analysis.
 
-#### Categorizing Values
+### Categorizing Values
 
 All columns, but `Value` and `CV (%)` hold nominal variables. Both the `Value` column and `CV (%)` hold interval variables.
 
@@ -1060,7 +1058,7 @@ ggplot(data = filtered_data,
   facet_wrap(~State, nrow = 3) +
   geom_text(aes(label = Value), vjust = -0.5, position = position_dodge(width = 0.9)) +
   labs(
-    title = "Figure 3. States* and Organic Operational Strawberry Sales",
+    title = "Figure 4. States* and Organic Operational Strawberry Sales",
     x = "Year",
     y = "Operations with Sales",
     caption = "*California was excluded due to extremely higher sales"
@@ -1079,7 +1077,7 @@ ggplot(data = filtered_data4,
        mapping = aes(x = Year, y = Value, fill = State)) +
   geom_bar(stat = "identity", position = "dodge") +
   labs(
-    title = "Figure 3. California* and Organic Operational Strawberry Sales",
+    title = "Figure 5. California* and Organic Operational Strawberry Sales",
     x = "Year",
     y = "Operations with Sales",
     caption = "*California was only included, as it was an outlier for the other data"
@@ -1104,7 +1102,7 @@ ggplot(data = filtered_data2,
   facet_wrap(~State, ncol = 4) +
   geom_text(aes(label = Value), vjust = -0.5, position = position_dodge(width = 0.9)) +
   labs(
-    title = "Figure 4. States* and Organic Strawberry Sales",
+    title = "Figure 6. States* and Organic Strawberry Sales",
     subtitle = "in US Dollars",
     x = "Year",
     y = "Sales ($ in 1000s)",
@@ -1125,7 +1123,7 @@ ggplot(data = filtered_data3,
        mapping = aes(x = Year, y = (Value/100000), fill = State)) +
   geom_bar(stat = "identity", position = "dodge") +
   labs(
-    title = "Figure 5. California* and Organic Strawberry Sales",
+    title = "Figure 7. California* and Organic Strawberry Sales",
     subtitle = "in US Dollars",
     x = "Year",
     y = "Sales ($ in 100000s)",
@@ -1151,7 +1149,7 @@ ggplot(data = filtered_data5,
   facet_wrap(~State, ncol = 4) +
   geom_text(aes(label = Value), vjust = -0.5, position = position_dodge(width = 0.9)) +
   labs(
-    title = "Figure 6. States* and Organic Strawberry Sales",
+    title = "Figure 8. States* and Organic Strawberry Sales",
     subtitle = "in US Dollars",
     x = "Year",
     y = "Weight of Sales (100s)",
@@ -1171,7 +1169,7 @@ ggplot(data = filtered_data6,
        mapping = aes(x = Year, y = (Value/100), fill = State)) +
   geom_bar(stat = "identity", position = "dodge") +
   labs(
-    title = "Figure 7. California* and Organic Strawberry Sales",
+    title = "Figure 9. California* and Organic Strawberry Sales",
     subtitle = "in US Dollars",
     x = "Year",
     y = "Weight of Sales (10000s)",
@@ -1182,45 +1180,46 @@ ggplot(data = filtered_data6,
 ```
 
 {{< pagebreak >}}
-### strwb_survey_mkt
 
-#### Columns & Values
+## Review of Data Frames: strwb_survey_mkt
+
+### Columns & Values
 
 There are five columns in `strwb_survey_mkt`: `Year`, `State`, `measurement`, `avg`, `type`, `fertilizer_type`, and `Value`. The columns represent the fertilizer type used for each year for each state and the amount of it that was used.
 
-##### Year
+#### Year
 
 `Year` holds two year values: `2018` and `2019`. This represents the year that the following values took place.
 
-##### State
+#### State
 
 `State` has two US state values: `CALIFORNIA` and `FLORIDA`. Each of these represent the US state that returned data for the selected columns included in this data frame.
 
-##### measurement
+#### measurement
 
 `measurement` has the following three values : `r paste(strwb_survey_mkt |> distinct(measurement))`. `MEASURED IN LB` represents that the following `Value` is in pounds (lbs). `MEASURED IN LB / ACRE / APPLICATION` is that the `Value` was measured in lbs divided by acreage of the farm and by the amount applied when used.
 
-##### avg
+#### avg
 
 `avg` holds `NA` and `avg` values. `avg` represents when an average was taken, and `NA` is present when an average was not needed for the type of measurement.
 
-##### type
+#### type
 
 `type` holds the single string of `FERTILIZER`, which represents that all the rows hold data related to fertilizers.
 
-##### fertilizer_type
+#### fertilizer_type
 
 `fertilizer_type` holds the following strings of fertilizer types used on the strawberry crops: `r paste(strwb_survey_mkt |> distinct(fertilizer_type))`.
 
-##### Value
+#### Value
 
 `Value` which holds numeric values that correspond with the `measurement` and `avg` columns to show the value related to the fertilizer usage.
 
-#### Missing Values
+### Missing Values
 
 All rows with data almost identical to `strwb_census` were removed. Additionally, all rows with `NA` values in the `Value` column were omitted, as they did not hold any meaningful data.
 
-#### Categorizing Variables
+### Categorizing Variables
 
 All columns but `Value` and hold nominal variables. The `Value` column holds interval variables.
 
@@ -1251,7 +1250,7 @@ ggplot(data = filtered_data10,
   geom_bar(stat = "identity", position = "dodge") +
   facet_wrap(~fertilizer_type, ncol = 2) +
   labs(
-    title = "Figure 8. Fertilizer Usage on Strawberry Crops",
+    title = "Figure 10. Fertilizer Usage on Strawberry Crops",
     subtitle = "in California and Florida",
     x = "Year",
     y = "Average Number of Fertilizer Usage",
@@ -1277,7 +1276,7 @@ ggplot(data = filtered_data11,
   geom_bar(stat = "identity", position = "dodge") +
   facet_wrap(~fertilizer_type, ncol = 2) +
   labs(
-    title = "Figure 9. Pounds of Fertilizer Used on Strawberries in California",
+    title = "Figure 11. Pounds of Fertilizer Used on Strawberries in California",
     x = "Year",
     y = "lbs of Fertilizer Used (10000s)",
   ) +
@@ -1297,7 +1296,7 @@ ggplot(data = filtered_data12,
   geom_bar(stat = "identity", position = "dodge") +
   facet_wrap(~fertilizer_type, nrow = 1) +
   labs(
-    title = "Figure 10. Pounds of Fertilizer Used on Strawberries in Florida",
+    title = "Figure 12. Pounds of Fertilizer Used on Strawberries in Florida",
     x = "Year",
     y = "lbs of Fertilizer Used (10000s)",
   ) +
@@ -1331,7 +1330,7 @@ ggplot(data = filtered_data13,
   facet_wrap(~fertilizer_type, nrow = 2) +
   geom_text(aes(label = Value), vjust = -0.5, position = position_dodge(width = 0.9)) +
   labs(
-    title = "Figure 11. Pounds of Fertilizer Used Per Acre Per Application",
+    title = "Figure 13. Pounds of Fertilizer Used Per Acre Per Application",
     subtitle = "in Florida and California",
     x = "Year",
     y = "lbs/acre/application",
@@ -1343,61 +1342,62 @@ ggplot(data = filtered_data13,
 ```
 
 {{< pagebreak >}}
-### strwb_survey_treat
 
-#### Columns & Values
+## Review of Data Frames: strwb_survey_treat
+
+### Columns & Values
 
 The columns in `strwb_survey_treat` are as follows: `r paste(colnames(strwb_survey_treat))`. Each of the values in the columns are explained below.
 
-##### Year
+#### Year
 
 `Year` represents the year in which the values in the row are from. The years are as follows: `r paste(strwb_survey_treat |> distinct(Year))`.
 
-##### State
+#### State
 
 `State` has the following strings: `r paste(strwb_survey_treat |> distinct(State))`. Each as these show what US state the survey data was retrieved from.
 
-##### chem_type
+#### chem_type
 
 `chem_type` holds strings representing categories of pesticides used: `r paste(strwb_survey_treat |> distinct(chem_type))`.
 
-##### strwb_treatment
+#### strwb_treatment
 
 `strwb_treatment` represents the chemical or bacteria used on the strawberry crops: `r paste(strwb_survey_treat |> distinct(strwb_treatment))`.
 
-##### PC
+#### PC
 
 `PC#` represents the treatment identification number, Pesticide Chemical Code. These are numeric values.
 
-##### CAS
+#### CAS
 
 `CAS#` either had the Chemical Abstracts Service number or is indicated as `Bacteria`, as bacterium do not have CAS#s.
 
-##### measurement
+#### measurement
 
 `measurement` has the following strings that represents the metric that the values were measured in: `r paste(strwb_survey_treat |> distinct(measurement))`.
 
-##### avg
+#### avg
 
 The `avg` column has both `NA` values and the string `avg`, which represents if the numeric value it is describing is an average or not.
 
-##### CAS
+#### CAS
 
 `CAS#` either had the Chemical Abstracts Service number or is indicated as `Bacteria`, as bacterium do not have CAS#s.
 
-##### toxicity
+#### toxicity
 
 `toxicity` holds the following strings: `r paste(strwb_survey_treat |> distinct(toxicity))`. These are based on the World Organization Health Organization's Pesticide Toxicity Classification \[[WHO, 2019](https://www.who.int/publications/i/item/9789240005662)\] (see more information above).
 
-##### Value
+#### Value
 
 Finally, the `Value` column holds numeric values that are described by the `avg` and `measurement` columns.
 
-#### Missing Values
+### Missing Values
 
 All missing values in `PC#` were dropped,
 
-#### Categorizing Variables
+### Categorizing Variables
 
 THe values in `toxicity` can be ranked high to low, therefore they are categorical variables. `CAS#`, `strwb_treatment`, `chem_type`, `State`, `Year`, `avg`, `measurement` and `PC#` are all nominal variables. `Value` holds interval variables.
 
@@ -1407,11 +1407,14 @@ THe values in `toxicity` can be ranked high to low, therefore they are categoric
 
 1.  What pesticide category was used the most?
 
-2.  What pesticides were most toxic?
+2.  Were bacterium or chemical pesticides more toxic?
 
 ##### What pesticide category was used the most?
 
+In Figure 12 (Oregon and Washington), Figure 13 (California), Figure 14 (Florida), there are bar charts to illustrate what category of pesticide was used in each state. The years were 2016 for all the states, with 2018, 2019, and 2021 for Oregon, Washington, and California. The pesticide used most for Oregon and Florida were fungicides, herbicide for Washington, and other for California.
+
 ```{r}
+#| echo: false
 
 new_data <- strwb_survey_treat |>
   filter(strwb_treatment == "TOTAL" & State != "CALIFORNIA" & State != "FLORIDA") 
@@ -1422,7 +1425,7 @@ ggplot(data = new_data,
        mapping = aes(x = Year, y = (Value/100), fill = State)) +
   geom_bar(stat = "identity", position = "dodge") +  
   labs(
-    title = "Figure 12. Pounds of Different Pesticide Categories Used",
+    title = "Figure 14. Pounds of Different Pesticide Categories Used",
     subtitle = "in Oregon and Washington",
     x = "Year",
     y = "lbs (100s)"
@@ -1435,6 +1438,8 @@ ggplot(data = new_data,
 ```
 
 ```{r}
+#| echo: false
+
 new_data2 <- strwb_survey_treat |>
   filter(strwb_treatment == "TOTAL" & State == "CALIFORNIA") 
 
@@ -1444,7 +1449,7 @@ ggplot(data = new_data2,
        mapping = aes(x = Year, y = (Value/100000))) +
   geom_bar(stat = "identity", position = "dodge") +  
   labs(
-    title = "Figure 12. Pounds of Different Pesticide Categories Used",
+    title = "Figure 15. Pounds of Different Pesticide Categories Used",
     subtitle = "in California",
     x = "Year",
     y = "lbs (1000000s)"
@@ -1455,6 +1460,8 @@ ggplot(data = new_data2,
 ```
 
 ```{r}
+#| echo: false
+
 new_data3 <- strwb_survey_treat |>
   filter(strwb_treatment == "TOTAL" & State == "FLORIDA") 
 
@@ -1464,7 +1471,7 @@ ggplot(data = new_data3,
        mapping = aes(x = Year, y = (Value / 10000))) +
   geom_bar(stat = "identity", position = "dodge") +  
   labs(
-    title = "Figure 12. Pounds of Different Pesticide Categories Used",
+    title = "Figure 16. Pounds of Different Pesticide Categories Used",
     subtitle = "in Florida",
     x = "Year",
     y = "lbs (10000s)"
@@ -1474,31 +1481,166 @@ ggplot(data = new_data3,
   facet_wrap(~chem_type)
 ```
 
+##### Were bacterium or chemical pesticides more toxic?
+
+In Table 1 below, it shows the toxicity classified by WHO, as well as the pesticide split up by type. After organizing the table, it is clear that the chemical-related pesticides are often more toxic than bacterium. Only 2 out of 13 bacterium were categorized as "unlikely to present acute hazard", one as "unknown", and the rest being "no significant acute toxicity" (n = 10). For chemicals, there were significantly less pesticides with "no significant acute toxicity" (n = 8) than the bacteria. There was one "highly hazardous" chemical, 21 "moderately hazardous" chemicals, 12 "slightly hazardous", 22 "unlikely to present acute hazard", two "fatal if inhaled", and three "toxic if inhaled".
+
++----------------------------------+-----------------------------------+-----------------------------------------------------+
+| Toxicity                         | Chemicals                         | Bacterium                                           |
++==================================+===================================+=====================================================+
+| Highly hazardous                 | "ABAMECTIN"                       | N/A                                                 |
++----------------------------------+-----------------------------------+-----------------------------------------------------+
+| Moderately hazardous             | "MYCLOBUTANIL"                    | N/A                                                 |
+|                                  |                                   |                                                     |
+|                                  | "PROPICONAZOLE"                   |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "TETRACONAZOLE"                   |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "THIRAM"                          |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "TRIFLUMIZOLE"                    |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "PENDIMETHALIN"                   |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "ACEQUINOCYL"                     |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "ACETAMIPRID"                     |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "BIFENTHRIN"                      |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "FENPROPATHRIN"                   |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "FENPYROXIMATE"                   |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "FLONICAMID"                      |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "FLUPYRADIFURONE"                 |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "IMIDACLOPRID"                    |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "NALED"                           |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "PYRETHRINS"                      |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "THIAMETHOXAM"                    |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "FLUTRIAFOL"                      |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "DIFENOCONAZOLE"                  |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "SULFOXAFLOR"                     |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "METAM-SODIUM"                    |                                                     |
++----------------------------------+-----------------------------------+-----------------------------------------------------+
+| Slightly hazardous               | "BORAX DECAHYDRATE"               | N/A                                                 |
+|                                  |                                   |                                                     |
+|                                  | "FLUOPYRAM"                       |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "FLUXAPYROXAD"                    |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "PENTHIOPYRAD"                    |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "PYRIMETHANIL"                    |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "FLUMIOXAZIN"                     |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "CYFLUMETOFEN"                    |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "MALATHION"                       |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "SPINOSAD"                        |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "SPIROMESIFEN"                    |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "ETOXAZOLE"                       |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "SULFENTRAZONE"                   |                                                     |
++----------------------------------+-----------------------------------+-----------------------------------------------------+
+| Unlikely to present acute hazard | "AZOXYSTROBIN"                    | "NEEM OIL"                                          |
+|                                  |                                   |                                                     |
+|                                  | "BOSCALID"                        | "BACILLUS PUMILUS"                                  |
+|                                  |                                   |                                                     |
+|                                  | "CAPTAN"                          |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "CYFLUFENAMID"                    |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "CYPRODINIL"                      |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "FENHEXAMID"                      |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "FLUDIOXONIL"                     |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "SULFUR"                          |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "THIOPHANATE-METHYL"              |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "TRIFLOXYSTROBIN"                 |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "OXYFLUORFEN"                     |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "BIFENAZATE"                      |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "CHLORANTRANILIPROLE"             |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "CYANTRANILIPROLE"                |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "HEXYTHIAZOX"                     |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "NOVALURON"                       |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "SPINETORAM"                      |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "HYDROGEN PEROXIDE"               |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "FOSETYL-AL"                      |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "PIPERONYL BUTOXIDE"              |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "PYRIPROXYFEN"                    |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "ISOFETAMID"                      |                                                     |
++----------------------------------+-----------------------------------+-----------------------------------------------------+
+| No significant acute toxicity    | "MEFENOXAM"                       | "REYNOUTRIA SACHALINE"                              |
+|                                  |                                   |                                                     |
+|                                  | "POLYOXIN D ZINC SALT"            | "BACILLUS AMYLOLIQUEFACIENS STRAIN D747"            |
+|                                  |                                   |                                                     |
+|                                  | "POTASSIUM BICARBON."             | "BACILLUS SUBTILIS"                                 |
+|                                  |                                   |                                                     |
+|                                  | "AZADIRACHTIN"                    | "BT KURSTAK ABTS-1857"                              |
+|                                  |                                   |                                                     |
+|                                  | "METHOXYFENOZIDE"                 | "BT KURSTAKI SA-11"                                 |
+|                                  |                                   |                                                     |
+|                                  | "METAM-POTASSIUM"                 | "CHROMOBAC SUBTSUGAE PRAA4-1 CELLS AND SPENT MEDIA" |
+|                                  |                                   |                                                     |
+|                                  | "CARFENTRAZONE-ETHYL"             | "BLAD"                                              |
+|                                  |                                   |                                                     |
+|                                  | "IRON PHOSPHATE"                  | "BT SUBSP KURSTAKI EVB-113-19"                      |
+|                                  |                                   |                                                     |
+|                                  |                                   | "BT SUB AIZAWAI GC-91"                              |
+|                                  |                                   |                                                     |
+|                                  |                                   | "BURKHOLDERIA A396 CELLS & MEDIA"                   |
++----------------------------------+-----------------------------------+-----------------------------------------------------+
+| Fatal if inhaled                 | "PYRACLOSTROBIN"                  | N/A                                                 |
+|                                  |                                   |                                                     |
+|                                  | "CHLOROPICRIN"                    |                                                     |
++----------------------------------+-----------------------------------+-----------------------------------------------------+
+| Toxic if inhaled                 | "QUINOLINE"                       | N/A                                                 |
+|                                  |                                   |                                                     |
+|                                  | "DICHLOROPROPENE"                 |                                                     |
+|                                  |                                   |                                                     |
+|                                  | "PEROXYACETIC ACID"               |                                                     |
++----------------------------------+-----------------------------------+-----------------------------------------------------+
+| Unknown                          | N/A                               | "BT KURSTAKI ABTS-351"                              |
++----------------------------------+-----------------------------------+-----------------------------------------------------+
+
+: Pesticides and Toxicity Level by Chemical and Bacteria \[[WHO, 2019](https://www.who.int/publications/i/item/9789240005662)\]
+
 {{< pagebreak >}}
 
-##### What pesticides were most toxic?
+# Conclusion
 
-```{r}
+In conclusion, the [USDA-NASS](https://quickstats.nass.usda.gov/results/45FBC825-B104-38E2-9802-839F5F3C7036) data set on US states' strawberry production shows US Census data on organic strawberry production (`strwb_census`), and the survey data is on fertilizer usage (`strwb_survey_mkt`) and pesticide usage (`strwb_survey_treat`). This data is prepared for more extensive analysis, specifically in `strwb_survey_treat` data frame. Overall, this data supports in a better understanding of organic versus non-organic strawberry production, as well as production in general for US states.
 
-
-
-new_data11 <- strwb_survey_treat |>
-  group_by(toxicity) 
-
-new_data11 <- new_data11 |>
-  mutate(toxicity = case_when(
-    strwb_treatment %in% c("GARLIC OIL") ~ "Extremely hazardous",
-    strwb_treatment %in% c("ABAMECTIN", "DODINE", "MINERAL OIL", "MUSTARD OIL", "ALKYL. DIM. BENZ. AM") ~ "Highly hazardous",
-    strwb_treatment %in% c("ACEQUINOCYL", "BIFENTHRIN", "CARBARYL", "CHLORPYRIFOS", "CLOMAZONE", "COPPER HYDROXIDE", "CYPERMETHRIN", "DIAZINON", "DIFENOCONAZOLE", "DIMETHENAMID", "DIMETHYL DISULFIDE (DMDS)", "DODINE", "EMAMECTIN BENZOATE", "ENDOSULFAN", "FENAZAQUIN", "FENPROPATHRIN", "FENPYROXIMATE", "FLONICAMID", "FLUPYRADIFURONE", "FLUTRIAFOL", "GLUFOSINATE-AMMONIUM", "IMIDACLOPRID", "LAMBDA-CYHALOTHRIN", "METALDEHYDE", "METAM-SODIUM", "MYCLOBUTANIL", "NALED", "PARAQUAT", "PENDIMETHALIN", "PROPICONAZOLE", "PYRETHRINS", "PYRIDABEN", "SULFOXAFLOR", "TETRACONAZOLE", "THIAMETHOXAM", "THIRAM", "TRIFLUMIZOLE", "ZETA-CYPERMETHRIN", "ACETAMIPRID", "DECYLDIMETHYLOCTYL", "DIDECYL DIM. AMMON.", "DIDECYL DIM. AMMON.", "CAPSICUM OLEORESIN EXTRACT") ~ "Moderately hazardous",
-    strwb_treatment %in% c("BIFENAZATE", "BOSCALID", "CAPTON", "CHLORANTRANILIPROLE", "CHLOROTHALONIL", "CYANTRANILIPROLE", "CYAZOFAMID", "FENHEXAMID", "FLUDIOXONIL", "FLUROXYPYR 1-MHE", "FLUTOLANIL", "FOSETYL-AL", "HEXYTHIAZOX", "MANCOZEB", "NAPROPAMIDE", "NOVALURON", "OXYFLUORFEN", "PIPERONYL BUTOXIDE", "PYDIFLUMETOFEN", "PYRIPROXYFEN", "SIMAZINE", "SPINETORAM", "TERBACIL", "THIOPHANATE-METHYL", "TRIFLOXYSTROBIN", "AZOXYSTROBIN", "CAPTAN", "CYFLUFENAMID", "CYPRODINIL", "GLYPHOSATE POT. SALT", "HYDROGEN PEROXIDE", "ISOFETAMID", "POTASSIUM SALTS", "SULFUR", "BACILLUS PUMILUS", "HELICOVERPA ZEA NPV", "NEEM OIL", "PSEUDOMONAS CHLORORAPHIS STRAIN AFS009", "TRICHODERMA HARZ.") ~ "Unlikely to present acute hazard",
-    strwb_treatment %in% c("BUPROFEZIN", "CLOPYRALID MONO SALT", "CYFLUMETOFEN", "ETHEPHON", "ETOXAZOLE", "FENBUTATIN-OXIDE", "FLUBENDIAMIDE", "FLUMIOXAZIN", "FLUOPYRAM", "FLUXAPYROXAD", "GLYPHOSATE ISO. SALT", "GLYPHOSATE ISO. SALT", "IPRODIONE", "MALATHION", "PENTHIOPYRAD", "PYRIMETHANIL", "SPINOSAD", "SPIROTETRAMAT", "BORAX DECAHYDRATE", "CYTOKININS", "MONO-POTASSIUM SALT", "SPIROMESIFEN", "SULFENTRAZONE") ~ "Slightly hazardous",
-    strwb_treatment %in% c("CHLOROPICRIN", "PYRACLOSTROBIN", "PETROLEUM DISTILLATE") ~ "Fatal if inhaled",
-    strwb_treatment %in% c("DICHLOROPROPENE", "METHYL BROMIDE", "PEROXYACETIC ACID", "QUINOLINE") ~ "Toxic if inhaled",
-    strwb_treatment %in% c("ACIBENZOLAR-S-METHYL", "AMMONIUM PELARGONATE", "AUREOBASIDIUM PULLULANS DSM 14941", "AZADIRACHTIN", "CANOLA OIL", "CAPRIC ACID", "CAPRYLIC ACID", "CAPSAICIN", "CARFENTRAZONE-ETHYL", "CLETHODIM", "COPPER CHLORIDE HYD.", "COPPER OCTANOATE", "COPPER OXIDE", "DIMETHYLDIOCTYL", "FERRIC SODIUM EDTA", "IRON PHOSPHATE", "MEFENOXAM", "METAM-POTASSIUM", "METHOXYFENOZIDE", "POLYOXIN D ZINC SALT", "POTASSIUM BICARBON.", "POTASSIUM SILICATE", "SOYBEAN OIL", "STREPTOMYCES LYDICUS", "BACILLUS AMYLOLIQUEFAC F727", "BACILLUS AMYLOLIQUEFACIENS MBI 600", "BACILLUS AMYLOLIQUEFACIENS STRAIN D747", "BACILLUS SUBTILIS", "AUREOBASIDIUM PULLULANS DSM 14940", "BACILLUS SUBT. GB03", "BEAUVERIA BASSIANA", "BLAD", "BT KURSTAK ABTS-1857", "BT KURSTAKI EG7841", "BT KURSTAKI SA-11", "BT KURSTAKI SA-12", "BT SUB AIZAWAI GC-91", "BT SUBSP KURSTAKI EVB-113-19", "BURKHOLDERIA A396 CELLS & MEDIA", "CHROMOBAC SUBTSUGAE PRAA4-1 CELLS AND SPENT MEDIA", "GLIOCLADIUM VIRENS", "HARPIN A B PROTEIN", "PAECILOMYCES FUMOSOR", "REYNOUTRIA SACHALINE", "TRICHODERMA VIRENS STRAIN G-41") ~ "No significant acute toxicity",
-    TRUE ~ "Unknown"  
-  ))
-
-```
-
+{{< pagebreak >}}
 
 # References
