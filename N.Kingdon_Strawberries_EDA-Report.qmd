@@ -761,8 +761,7 @@ strwb_survey_chem <- strwb_survey_chem |>
     chemical %in% c("CHLOROPICRIN", "PYRACLOSTROBIN", "PETROLEUM DISTILLATE") ~ "Fatal if inhaled",
     chemical %in% c("DICHLOROPROPENE", "METHYL BROMIDE", "PEROXYACETIC ACID", "QUINOLINE") ~ "Toxic if inhaled",
     chemical %in% c("ACIBENZOLAR-S-METHYL", "AMMONIUM PELARGONATE", "AUREOBASIDIUM PULLULANS DSM 14941", "AZADIRACHTIN", "CANOLA OIL", "CAPRIC ACID", "CAPRYLIC ACID", "CAPSAICIN", "CARFENTRAZONE-ETHYL", "CLETHODIM", "COPPER CHLORIDE HYD.", "COPPER OCTANOATE", "COPPER OXIDE", "DIMETHYLDIOCTYL", "FERRIC SODIUM EDTA", "IRON PHOSPHATE", "MEFENOXAM", "METAM-POTASSIUM", "METHOXYFENOZIDE", "POLYOXIN D ZINC SALT", "POTASSIUM BICARBON.", "POTASSIUM SILICATE", "SOYBEAN OIL", "STREPTOMYCES LYDICUS", "BACILLUS AMYLOLIQUEFAC F727", "BACILLUS AMYLOLIQUEFACIENS MBI 600", "BACILLUS AMYLOLIQUEFACIENS STRAIN D747", "BACILLUS SUBTILIS", "AUREOBASIDIUM PULLULANS DSM 14940", "BACILLUS SUBT. GB03", "BEAUVERIA BASSIANA", "BLAD", "BT KURSTAK ABTS-1857", "BT KURSTAKI EG7841", "BT KURSTAKI SA-11", "BT KURSTAKI SA-12", "BT SUB AIZAWAI GC-91", "BT SUBSP KURSTAKI EVB-113-19", "BURKHOLDERIA A396 CELLS & MEDIA", "CHROMOBAC SUBTSUGAE PRAA4-1 CELLS AND SPENT MEDIA", "GLIOCLADIUM VIRENS", "HARPIN A B PROTEIN", "PAECILOMYCES FUMOSOR", "REYNOUTRIA SACHALINE", "TRICHODERMA VIRENS STRAIN G-41") ~ "No significant acute toxicity",
-    chemical %in% c("COPPER ETHANOLAMINE", "KANTOR", "HALOSULFURON-METHYL") ~ "Unknown",
-    TRUE ~ "Bacteria"  
+    TRUE ~ "Unknown"  
   ))
 ```
 
@@ -1077,10 +1076,11 @@ filtered_data2 <- strwb_census |>
 ggplot(data = filtered_data2,
        mapping = aes(x = Year, y = (Value/1000), fill = State)) +
   geom_bar(stat = "identity", position = "dodge") +
-  facet_wrap(~State, ncol = 3) +
+  facet_wrap(~State, ncol = 4) +
   geom_text(aes(label = Value), vjust = -0.5, position = position_dodge(width = 0.9)) +
   labs(
-    title = "Figure 4. States* and Organic Strawberry Sales in US Dollars",
+    title = "Figure 4. States* and Organic Strawberry Sales",
+    subtitle = "in US Dollars",
     x = "Year",
     y = "Sales ($ in 1000s)",
     caption = "*California was excluded due to extremely higher sales"
@@ -1100,7 +1100,8 @@ ggplot(data = filtered_data3,
        mapping = aes(x = Year, y = (Value/100000), fill = State)) +
   geom_bar(stat = "identity", position = "dodge") +
   labs(
-    title = "Figure 5. California* and Organic Strawberry Sales in US Dollars",
+    title = "Figure 5. California* and Organic Strawberry Sales",
+    subtitle = "in US Dollars",
     x = "Year",
     y = "Sales ($ in 100000s)",
     caption = "*Only California was included, as it is an outlier from the other states"
@@ -1122,10 +1123,11 @@ filtered_data5 <- strwb_census |>
 ggplot(data = filtered_data5,
        mapping = aes(x = Year, y = Value, fill = State)) +
   geom_bar(stat = "identity", position = "dodge") +
-  facet_wrap(~State, ncol = 3) +
+  facet_wrap(~State, ncol = 4) +
   geom_text(aes(label = Value), vjust = -0.5, position = position_dodge(width = 0.9)) +
   labs(
-    title = "Figure 6. States* and Organic Strawberry Sales in US Dollars",
+    title = "Figure 6. States* and Organic Strawberry Sales",
+    subtitle = "in US Dollars",
     x = "Year",
     y = "Weight of Sales (100s)",
     caption = "*California was excluded due to being an extreme outlier"
@@ -1144,7 +1146,8 @@ ggplot(data = filtered_data6,
        mapping = aes(x = Year, y = (Value/100), fill = State)) +
   geom_bar(stat = "identity", position = "dodge") +
   labs(
-    title = "Figure 7. California* and Organic Strawberry Sales in US Dollars",
+    title = "Figure 7. California* and Organic Strawberry Sales",
+    subtitle = "in US Dollars",
     x = "Year",
     y = "Weight of Sales (10000s)",
     caption = "*California was only included, as it was an extreme outlier"
@@ -1203,13 +1206,13 @@ The following questions will be answered via data visualization below:
 
 1.  What state used what fertilizer types? What fertilizers were used the most?
 
-2.  What state used the most pounds of fertilizer? 
+2.  What state used the most pounds of fertilizer?
 
 3.  What state used the most pounds per an acre per application of fertilizer? What fertilizer was used the most?
 
 ##### What state used what fertilizer types?
 
-As shown in Figure 8 below, California used all four fertilizers on their crops (nitrogen, phosphate, potash, sulfur), and Florida used all but sulfur. The fertilizer used the most was nitrogen for both California (n = 16.9) and Florida (n = 28.7). Next most used was potash for both California (n = 14.3) and Florida (n = 25.2). Florida used more fertilizer than California for all three fertilizers they both used. Nitrogen and potash were used the most for both California and Florida (n = )
+As shown in Figure 8 below, California used all four fertilizers on their crops (nitrogen, phosphate, potash, sulfur), and Florida used all but sulfur. The fertilizer used the most was nitrogen for both California (n = 16.9) and Florida (n = 28.7). Next most used was potash for both California (n = 14.3) and Florida (n = 25.2). Florida used more fertilizer than California for all three fertilizers they both used.
 
 ```{r}
 #| echo: false
@@ -1218,24 +1221,26 @@ filtered_data10 <- strwb_survey_mkt |>
   filter(measurement == "MEASURED IN NUMBER") 
 
 ggplot(data = filtered_data10,
-       mapping = aes(x = fertilizer_type, y = Value, fill = State)) +
+       mapping = aes(x = Year, y = Value, fill = State)) +
   geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~fertilizer_type, ncol = 2) +
   labs(
-    title = "Figure 8. Calfornia and Florida Fertiziler Usage on Strawberries",
-    x = "Fertilizer",
-    y = "Average Number of Ferilizer Usage",
+    title = "Figure 8. Fertilizer Usage on Strawberry Crops",
+    subtitle = "in California and Florida",
+    x = "Year",
+    y = "Average Number of Fertilizer Usage",
     caption = "Sulfur was only used in California"
   ) +
-  theme_bw() 
+  theme_bw() +
+  scale_x_continuous(breaks = c(2018, 2019))
   
 ```
 
 ##### What state used the most pounds of fertilizer?
 
-Figure 9 shows the pounds (lbs) of fertilizer by type for the state of California, and Figure 10 shows such for Florida. California (N = 31,289,000) used far more lbs of fertilizer than Florida (N = 1,146,000) between the years of 2018 and 2019. California used far more lbs of all four fertilizers in 2018 than in 2019. Florida had the opposite with more fertilizer used in 2019 than 2018. 
+Figure 9 shows the pounds (lbs) of fertilizer by type for the state of California, and Figure 10 shows such for Florida. California (N = 31,289,000) used far more lbs of fertilizer than Florida (N = 1,146,000) between the years of 2018 and 2019. California used far more lbs of all four fertilizers in 2018 than in 2019. Florida had the opposite with more fertilizer used in 2019 than 2018.
 
 ```{r}
-
 #| echo: false
 
 filtered_data11 <- strwb_survey_mkt |>
@@ -1246,8 +1251,8 @@ ggplot(data = filtered_data11,
   geom_bar(stat = "identity", position = "dodge") +
   facet_wrap(~fertilizer_type, ncol = 2) +
   labs(
-    title = "Figure 9. Pounds of Fertiziler Used on Strawberries in California",
-    x = "Fertilizer",
+    title = "Figure 9. Pounds of Fertilizer Used on Strawberries in California",
+    x = "Year",
     y = "lbs of Fertilizer Used (10000s)",
   ) +
   theme_bw() +
@@ -1266,13 +1271,71 @@ ggplot(data = filtered_data12,
   geom_bar(stat = "identity", position = "dodge") +
   facet_wrap(~fertilizer_type, nrow = 1) +
   labs(
-    title = "Figure 10. Pounds of Fertiziler Used on Strawberries in Florida",
-    x = "Fertilizer",
+    title = "Figure 10. Pounds of Fertilizer Used on Strawberries in Florida",
+    x = "Year",
     y = "lbs of Fertilizer Used (10000s)",
   ) +
   theme_bw() +
   scale_x_continuous(breaks = c(2018, 2019)) 
 ```
 
+##### What state used the most pounds per an acre per application of fertilizer?
+
+```{r}
+#| echo: false
+
+filtered_data20 <- strwb_survey_mkt |>
+  filter(measurement == "MEASURED IN LB / ACRE / APPLICATION" & State == "CALIFORNIA")
+
+filtered_data21 <- strwb_survey_mkt |>
+  filter(measurement == "MEASURED IN LB / ACRE / APPLICATION" & State == "FLORIDA") 
+```
+
+Figure 11 below shows that California (Mean = `r paste(round(mean(filtered_data20$Value)))`) used significantly more lbs of fertilizer per an acre and application than Florida (Mean = `r paste(round(mean(filtered_data21$Value)))`). The most used pesticide for California (n = 24) and Florida (n = 2) was potash.
+
+```{r}
+#| echo: false
+
+filtered_data13 <- strwb_survey_mkt |>
+  filter(measurement == "MEASURED IN LB / ACRE / APPLICATION") 
+
+ggplot(data = filtered_data13,
+       mapping = aes(x = Year, y = (Value), fill = State)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~fertilizer_type, nrow = 2) +
+  geom_text(aes(label = Value), vjust = -0.5, position = position_dodge(width = 0.9)) +
+  labs(
+    title = "Figure 11. Pounds of Fertilizer Used Per Acre Per Application",
+    subtitle = "in Florida and California",
+    x = "Year",
+    y = "lbs/acre/application",
+    caption = "Sulfur was only used in California"
+  ) +
+  theme_bw() +
+  scale_x_continuous(breaks = c(2018, 2019)) +
+  scale_y_continuous(breaks = c(5, 10, 15, 20, 25, 30)) 
+```
+
+### strwb_survey_treat
+
+#### Columns & Values
+
+The columns in `strwb_survey_treat` are as follows: `r paste(colnames(strwb_survey_treat))`. Each of the values in the columns are explained below.
+
+`Year` represents the year in which the values in the row are from. The years are as follows: `r paste(strwb_survey_treat |> distinct(Year))`.
+
+`State` has the following strings: `r paste(strwb_survey_treat |> distinct(State))`. Each as these show what US state the survey data was retrieved from.
+
+`chem_type` holds strings representing categories of pesticides used: `r paste(strwb_survey_treat |> distinct(chem_type))`.
+
+`strwb_treatment` represents the chemical or bacteria used on the strawberry crops: `r paste(strwb_survey_treat |> distinct(strwb_treatment))`.
+
+`PC#` represents the treatment identification number, Pesticide Chemical Code. These are numeric values.
+
+`CAS#` either had the Chemical Abstracts Service number or is indicated as `Bacteria`, as bacterium do not have CAS#s.
+
+
+
+Finally, `toxicity` holds the following strings: `r paste(strwb_survey_treat |> distinct(toxicity))`. These are based on the World Organization Health Organization's Pesticide Toxicity Classification \[[WHO, 2019](https://www.who.int/publications/i/item/9789240005662)\] (see more information above).
 
 # References
